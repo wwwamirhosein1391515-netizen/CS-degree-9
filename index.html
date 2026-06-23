@@ -1,0 +1,2404 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>CS Degree</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+  import {
+    getFirestore, doc, getDoc, setDoc
+  } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCGZaWdoD-j80fbGUlAfJNmp-05KwITfDU",
+    authDomain: "cs-degree-66d37.firebaseapp.com",
+    projectId: "cs-degree-66d37",
+    storageBucket: "cs-degree-66d37.firebasestorage.app",
+    messagingSenderId: "214094806777",
+    appId: "1:214094806777:web:3606a9df8ed2f9942a2c28",
+    measurementId: "G-V7T89YZJ4F"
+  };
+
+  const fbApp = initializeApp(firebaseConfig);
+  try{ getAnalytics(fbApp); }catch(e){ console.warn('Analytics unavailable:', e); }
+  const db = getFirestore(fbApp);
+
+  // Expose a small bridge so the main (non-module) script can read/write Firestore
+  // while keeping all of its existing synchronous logic untouched.
+  window.__csdFirebase = {
+    db,
+    async getDoc(collection, id){
+      try{
+        const snap = await getDoc(doc(db, collection, id));
+        return snap.exists() ? snap.data().value : undefined;
+      }catch(e){
+        console.error('Firestore read failed:', e);
+        return undefined;
+      }
+    },
+    async setDoc(collection, id, value){
+      try{
+        await setDoc(doc(db, collection, id), { value });
+      }catch(e){
+        console.error('Firestore write failed:', e);
+      }
+    }
+  };
+  // Signal readiness to the main script
+  window.dispatchEvent(new Event('csd-firebase-ready'));
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root{
+  --navy-950:#070f1f;
+  --navy-900:#0b1b33;
+  --navy-800:#122544;
+  --navy-700:#1a3358;
+  --gold-500:#c9a24b;
+  --gold-400:#dbb86b;
+  --gold-300:#e8cf94;
+  --cream-50:#fdfbf6;
+  --cream-100:#f5f0e6;
+  --emerald-700:#1f4d3a;
+  --emerald-500:#2c6e4f;
+  --ink-900:#101622;
+  --red-600:#b3432f;
+  --shadow-deep: 0 30px 60px -20px rgba(7,15,31,0.55);
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Vazirmatn', sans-serif;
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(201,162,75,0.12), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(44,110,79,0.10), transparent 55%),
+    var(--navy-950);
+  color:var(--cream-100);
+  min-height:100%;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+input{font-family:inherit;}
+img{max-width:100%; display:block;}
+
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size:42px 42px;
+  pointer-events:none;
+  z-index:0;
+}
+
+::-webkit-scrollbar{width:10px; height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(201,162,75,0.35); border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(201,162,75,0.55);}
+
+/* ===== USER CODES PANEL ===== */
+.user-codes-header{
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px; background:rgba(201,162,75,0.07);
+  border:1px solid rgba(201,162,75,0.18); border-radius:12px;
+  margin-bottom:14px;
+}
+.user-codes-header img{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold-500);object-fit:cover;}
+.user-codes-header-name{font-weight:700; font-size:14px; color:var(--cream-50);}
+.user-codes-header-sub{font-size:11.5px; color:rgba(245,240,230,0.5); margin-top:2px;}
+
+.lang-code-card{
+  background:rgba(7,15,31,0.4);
+  border:1px solid rgba(201,162,75,0.14);
+  border-radius:14px; padding:14px 16px;
+  margin-bottom:10px; display:flex; align-items:center; gap:14px;
+  transition:border-color .2s;
+}
+.lang-code-card.active-code{ border-color:rgba(44,110,79,0.6); background:rgba(44,110,79,0.06); }
+.lang-code-card.used-code{ border-color:rgba(201,162,75,0.35); background:rgba(201,162,75,0.04); opacity:.75; }
+.lang-icon{
+  width:38px; height:38px; border-radius:10px; flex-shrink:0;
+  background:rgba(201,162,75,0.12); border:1px solid rgba(201,162,75,0.22);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:var(--gold-300); letter-spacing:-.5px;
+}
+.lang-code-info{flex:1; min-width:0;}
+.lang-code-name{font-weight:700; font-size:13.5px; color:var(--cream-50);}
+.lang-code-value{
+  font-size:11px; letter-spacing:2px; color:rgba(245,240,230,0.45);
+  margin-top:3px; font-family:monospace; direction:ltr; display:inline-block;
+}
+.lang-code-status{
+  font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px;
+  white-space:nowrap; flex-shrink:0;
+}
+.lang-code-status.inactive{ background:rgba(179,67,47,0.15); color:#e98b78; border:1px solid rgba(179,67,47,0.3); }
+.lang-code-status.active{ background:rgba(44,110,79,0.2); color:#5db88a; border:1px solid rgba(44,110,79,0.4); }
+.lang-code-status.used{ background:rgba(201,162,75,0.15); color:var(--gold-300); border:1px solid rgba(201,162,75,0.3); }
+
+.lang-code-actions{display:flex; gap:8px; margin-top:10px; align-items:center;}
+.score-mini-wrap{display:flex; align-items:center; gap:8px; flex:1;}
+.score-mini-wrap input[type=range]{flex:1; height:4px; accent-color:var(--gold-400);}
+.score-mini-label{font-size:12px; color:var(--gold-300); font-weight:700; min-width:30px; text-align:center;}
+.btn-activate{
+  padding:7px 14px; border-radius:9px; font-size:12px; font-weight:700;
+  background:linear-gradient(180deg, var(--gold-400), var(--gold-500)); color:var(--navy-950);
+  transition:transform .15s, opacity .15s; flex-shrink:0;
+}
+.btn-activate:hover{transform:translateY(-1px);}
+.btn-activate:disabled{opacity:.4; cursor:not-allowed; transform:none;}
+.btn-deactivate{
+  padding:7px 12px; border-radius:9px; font-size:12px; font-weight:700; flex-shrink:0;
+  background:rgba(179,67,47,0.15); color:#e98b78; border:1px solid rgba(179,67,47,0.3);
+  transition:background .2s;
+}
+.btn-deactivate:hover{background:rgba(179,67,47,0.25);}
+.copy-code-mini{
+  padding:5px 10px; border-radius:8px; font-size:11px; font-weight:600; flex-shrink:0;
+  background:rgba(201,162,75,0.1); color:var(--gold-300); border:1px solid rgba(201,162,75,0.2);
+  cursor:pointer; transition:background .2s;
+}
+.copy-code-mini:hover{background:rgba(201,162,75,0.2);}
+
+:focus-visible{outline:2px solid var(--gold-400); outline-offset:3px; border-radius:6px;}
+
+.screen{
+  position:fixed; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  z-index:50;
+  padding:24px;
+  overflow-y:auto;
+}
+.hidden{display:none !important;}
+
+/* ============ ONBOARDING ============ */
+#onboardingScreen{
+  background:
+    radial-gradient(1100px 650px at 50% -8%, rgba(201,162,75,0.16), transparent 60%),
+    var(--navy-950);
+}
+.ob-card{
+  width:100%; max-width:460px;
+  background:linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border:1px solid rgba(201,162,75,0.25);
+  border-radius:22px;
+  padding:38px 30px 30px;
+  box-shadow:var(--shadow-deep);
+  position:relative;
+  animation:riseIn .6s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes riseIn{from{opacity:0; transform:translateY(18px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);}}
+
+.ob-crest{
+  width:64px; height:64px; margin:0 auto 16px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 35% 30%, var(--gold-300), var(--gold-500) 60%, #9c7a32 100%);
+  box-shadow:0 8px 22px rgba(201,162,75,0.35), inset 0 2px 4px rgba(255,255,255,0.4);
+  font-weight:900; color:var(--navy-950); font-size:22px; letter-spacing:-1px;
+}
+.ob-title{text-align:center; font-size:24px; font-weight:800; color:var(--cream-50); letter-spacing:.5px;}
+.ob-sub{text-align:center; font-size:13px; color:rgba(245,240,230,0.55); margin-top:6px; margin-bottom:26px;}
+
+.field-group{margin-bottom:16px;}
+.field-label{font-size:12.5px; color:var(--gold-300); font-weight:600; margin-bottom:7px; display:block;}
+.field-input{
+  width:100%; padding:13px 15px; border-radius:12px;
+  background:rgba(7,15,31,0.55);
+  border:1px solid rgba(201,162,75,0.22);
+  color:var(--cream-50); font-size:14.5px;
+  transition:border-color .2s, box-shadow .2s, background .2s;
+}
+.field-input::placeholder{color:rgba(245,240,230,0.32);}
+.field-input:focus{border-color:var(--gold-400); box-shadow:0 0 0 3px rgba(201,162,75,0.14); background:rgba(7,15,31,0.75);}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+
+.upload-zone{
+  margin-top:6px;
+  border:1.5px dashed rgba(201,162,75,0.4);
+  border-radius:16px;
+  padding:18px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer;
+  transition:border-color .2s, background .2s;
+  background:rgba(201,162,75,0.04);
+}
+.upload-zone:hover{border-color:var(--gold-400); background:rgba(201,162,75,0.08);}
+.upload-zone.has-image{border-style:solid;}
+.upload-preview{
+  width:54px; height:54px; border-radius:50%; flex-shrink:0;
+  background:var(--navy-700);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  border:2px solid var(--gold-500);
+}
+.upload-preview img{width:100%; height:100%; object-fit:cover;}
+.upload-preview svg{width:24px; height:24px; opacity:.5;}
+.upload-text-main{font-size:13.5px; font-weight:600; color:var(--cream-50);}
+.upload-text-sub{font-size:11.5px; color:rgba(245,240,230,0.5); margin-top:2px;}
+
+.hint-error{
+  font-size:12px; color:#e98b78; margin-top:4px; min-height:0;
+  display:flex; align-items:center; gap:5px; opacity:0; transform:translateY(-4px);
+  transition:opacity .2s, transform .2s;
+}
+.hint-error.show{opacity:1; transform:translateY(0);}
+
+#adminReveal{
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height .5s cubic-bezier(.2,.8,.2,1), opacity .5s, margin-top .5s;
+}
+#adminReveal.open{max-height:160px; opacity:1; margin-top:14px;}
+.admin-toggle-link{
+  font-size:12px; color:rgba(201,162,75,0.55); text-align:center;
+  display:block; width:100%; padding:6px; margin-top:10px;
+  transition:color .2s;
+  letter-spacing:.3px;
+}
+.admin-toggle-link:hover{color:var(--gold-400);}
+
+.btn-primary{
+  width:100%; padding:14px; border-radius:13px; margin-top:8px;
+  background:linear-gradient(180deg, var(--gold-400), var(--gold-500));
+  color:var(--navy-950); font-weight:800; font-size:15px;
+  box-shadow:0 10px 24px -8px rgba(201,162,75,0.5);
+  transition:transform .15s, box-shadow .15s, filter .15s;
+  position:relative; overflow:hidden;
+}
+.btn-primary:hover{transform:translateY(-1px); box-shadow:0 14px 28px -8px rgba(201,162,75,0.6);}
+.btn-primary:active{transform:translateY(0px) scale(.99);}
+.btn-primary:disabled{filter:grayscale(.6) opacity(.5); cursor:not-allowed; transform:none; box-shadow:none;}
+.btn-primary.loading .btn-label{opacity:0;}
+.btn-spinner{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .2s;
+}
+.btn-primary.loading .btn-spinner{opacity:1;}
+.spin{width:18px; height:18px; border-radius:50%; border:2.5px solid rgba(7,15,31,0.25); border-top-color:var(--navy-950); animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ============ ADMIN LOGIN MODAL ============ */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(5,9,18,0.72); backdrop-filter:blur(6px);
+  z-index:80; display:flex; align-items:center; justify-content:center; padding:20px;
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+.modal-card{
+  width:100%; max-width:380px;
+  background:linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  border:1px solid rgba(201,162,75,0.3);
+  border-radius:20px; padding:30px 26px;
+  box-shadow:var(--shadow-deep);
+  animation:popIn .3s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes popIn{from{opacity:0; transform:scale(.92);} to{opacity:1; transform:scale(1);}}
+.modal-icon{
+  width:50px; height:50px; border-radius:50%; margin:0 auto 14px;
+  background:rgba(201,162,75,0.12); border:1px solid rgba(201,162,75,0.3);
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-icon svg{width:22px; height:22px; stroke:var(--gold-400);}
+.modal-title{text-align:center; font-weight:800; font-size:17px; color:var(--cream-50);}
+.modal-sub{text-align:center; font-size:12.5px; color:rgba(245,240,230,0.5); margin-top:5px; margin-bottom:20px;}
+.code-input{
+  width:100%; padding:14px 16px; border-radius:12px; text-align:center;
+  background:rgba(7,15,31,0.6); border:1px solid rgba(201,162,75,0.25);
+  color:var(--cream-50); font-size:18px; letter-spacing:3px;
+  -webkit-text-security:disc;
+}
+.code-input:focus{border-color:var(--gold-400); box-shadow:0 0 0 3px rgba(201,162,75,0.14);}
+.modal-actions{display:flex; gap:10px; margin-top:18px;}
+.btn-ghost{
+  flex:1; padding:12px; border-radius:11px; font-size:13.5px; font-weight:600;
+  background:rgba(255,255,255,0.04); color:rgba(245,240,230,0.75);
+  border:1px solid rgba(255,255,255,0.08);
+  transition:background .2s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,0.08);}
+.btn-gold-sm{
+  flex:1.4; padding:12px; border-radius:11px; font-size:13.5px; font-weight:800;
+  background:linear-gradient(180deg, var(--gold-400), var(--gold-500)); color:var(--navy-950);
+}
+.lock-banner{
+  text-align:center; font-size:12px; color:#e98b78; margin-top:14px;
+  background:rgba(179,67,47,0.12); border:1px solid rgba(179,67,47,0.3);
+  padding:10px; border-radius:10px; display:none;
+}
+.lock-banner.show{display:block;}
+
+/* ============ MAIN APP SHELL ============ */
+#appShell{display:none; min-height:100vh; flex-direction:column; position:relative; z-index:1;}
+#appShell.active{display:flex;}
+
+/* BUG FIX #1: removed duplicate position:relative / position:sticky conflict */
+.topbar{
+  position:sticky; top:0; z-index:30;
+  background:rgba(11,27,51,0.78); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(201,162,75,0.18);
+  padding:16px 18px;
+  display:flex; align-items:center; justify-content:center;
+}
+.topbar-title{
+  font-size:19px; font-weight:800; letter-spacing:1.5px; color:var(--cream-50);
+  display:flex; align-items:center; gap:9px;
+  /* BUG FIX #2: pointer-events on title so tap detection works reliably */
+  cursor:pointer; user-select:none;
+}
+.topbar-title .dot{width:6px; height:6px; border-radius:50%; background:var(--gold-400); box-shadow:0 0 8px var(--gold-400); pointer-events:none;}
+.topbar-user{
+  position:absolute; left:16px; top:50%; transform:translateY(-50%);
+  display:flex; align-items:center; gap:9px;
+}
+.topbar-avatar{
+  width:34px; height:34px; border-radius:50%; overflow:hidden;
+  border:1.5px solid var(--gold-500); flex-shrink:0; cursor:pointer;
+  background:var(--navy-700);
+}
+.topbar-avatar img{width:100%; height:100%; object-fit:cover;}
+.logout-btn{
+  position:absolute; right:16px; top:50%; transform:translateY(-50%);
+  width:34px; height:34px; border-radius:50%;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s;
+}
+.logout-btn:hover{background:rgba(179,67,47,0.2);}
+.logout-btn svg{width:16px; height:16px; stroke:rgba(245,240,230,0.7);}
+
+.main-content{flex:1; padding:28px 18px 100px; max-width:760px; width:100%; margin:0 auto;}
+
+.welcome-block{text-align:center; margin-bottom:30px; animation:riseIn .5s ease;}
+.welcome-avatar{
+  width:84px; height:84px; border-radius:50%; margin:0 auto 14px;
+  border:3px solid var(--gold-500); overflow:hidden;
+  box-shadow:0 10px 30px -8px rgba(201,162,75,0.4);
+  background:var(--navy-700);
+}
+.welcome-avatar img{width:100%; height:100%; object-fit:cover;}
+.welcome-name{font-size:21px; font-weight:800; color:var(--cream-50);}
+.welcome-sub{font-size:13px; color:rgba(245,240,230,0.5); margin-top:4px;}
+
+.section-label{
+  font-size:13px; font-weight:700; color:var(--gold-300); letter-spacing:.5px;
+  margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.section-label svg{width:15px; height:15px; stroke:var(--gold-400);}
+
+.history-empty{
+  text-align:center; padding:46px 20px;
+  background:rgba(255,255,255,0.02); border:1px dashed rgba(201,162,75,0.22);
+  border-radius:18px;
+}
+.history-empty svg{width:40px; height:40px; stroke:rgba(201,162,75,0.35); margin:0 auto 12px;}
+.history-empty-title{font-size:14.5px; font-weight:700; color:rgba(245,240,230,0.7);}
+.history-empty-sub{font-size:12.5px; color:rgba(245,240,230,0.42); margin-top:5px; line-height:1.8;}
+
+.history-grid{display:flex; flex-direction:column; gap:12px;}
+.history-card{
+  background:linear-gradient(135deg, var(--navy-800), var(--navy-900));
+  border:1px solid rgba(201,162,75,0.2);
+  border-radius:16px; padding:16px 18px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer; transition:transform .15s, border-color .15s;
+}
+.history-card:hover{transform:translateX(-2px); border-color:rgba(201,162,75,0.4);}
+.history-icon{
+  width:46px; height:46px; border-radius:12px; flex-shrink:0;
+  background:linear-gradient(160deg, var(--gold-300), var(--gold-500));
+  display:flex; align-items:center; justify-content:center;
+  color:var(--navy-950); font-weight:900; font-size:15px;
+}
+.history-info{flex:1; min-width:0;}
+.history-lang-title{font-size:14.5px; font-weight:700; color:var(--cream-50);}
+.history-date{font-size:11.5px; color:rgba(245,240,230,0.45); margin-top:3px;}
+.history-score-chip{
+  font-size:12px; font-weight:800; padding:5px 10px; border-radius:8px;
+  background:rgba(44,110,79,0.18); color:#7fd6ac; border:1px solid rgba(44,110,79,0.35);
+  flex-shrink:0;
+}
+
+/* FAB */
+.fab{
+  position:fixed; bottom:26px; left:26px; z-index:40;
+  width:60px; height:60px; border-radius:50%;
+  background:linear-gradient(160deg, var(--gold-300), var(--gold-500));
+  box-shadow:0 14px 34px -10px rgba(201,162,75,0.65), 0 0 0 6px rgba(201,162,75,0.08);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .2s, box-shadow .2s;
+}
+.fab:hover{transform:scale(1.06) rotate(90deg);}
+.fab:active{transform:scale(.95) rotate(90deg);}
+.fab svg{width:26px; height:26px; stroke:var(--navy-950); stroke-width:2.6;}
+
+/* redeem modal */
+.redeem-card{width:100%; max-width:400px;}
+.redeem-input-wrap{display:flex; gap:9px; justify-content:center; margin-top:6px;}
+.digit-box{
+  width:42px; height:52px; border-radius:11px;
+  background:rgba(7,15,31,0.6); border:1px solid rgba(201,162,75,0.25);
+  text-align:center; font-size:20px; font-weight:800; color:var(--cream-50);
+}
+.digit-box:focus{border-color:var(--gold-400); box-shadow:0 0 0 3px rgba(201,162,75,0.14);}
+.redeem-msg{text-align:center; font-size:12.5px; margin-top:14px; min-height:18px;}
+.redeem-msg.err{color:#e98b78;}
+.redeem-msg.ok{color:#7fd6ac;}
+
+/* ============ CERTIFICATE ============ */
+#certScreen{
+  background:rgba(5,9,18,0.92); backdrop-filter:blur(8px);
+  flex-direction:column; gap:18px; padding:18px;
+}
+.cert-toolbar{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+.cert-tool-btn{
+  padding:10px 18px; border-radius:11px; font-size:13px; font-weight:700;
+  background:rgba(255,255,255,0.06); color:var(--cream-50); border:1px solid rgba(255,255,255,0.1);
+  display:flex; align-items:center; gap:7px;
+  transition:background .2s;
+}
+.cert-tool-btn svg{width:15px; height:15px;}
+.cert-tool-btn:hover{background:rgba(255,255,255,0.12);}
+.cert-tool-btn.gold{background:linear-gradient(180deg, var(--gold-400), var(--gold-500)); color:var(--navy-950); border:none;}
+
+.cert-stage{
+  width:100%; max-width:920px; aspect-ratio:16/9;
+  display:flex; align-items:center; justify-content:center;
+  overflow:auto;
+}
+.certificate{
+  width:100%; aspect-ratio:16/9;
+  background:
+    radial-gradient(ellipse 70% 35% at 50% 0%, rgba(200,210,220,0.25), transparent 55%),
+    radial-gradient(ellipse 50% 25% at 50% 100%, rgba(180,195,210,0.15), transparent 55%),
+    linear-gradient(170deg, #f4f6f8 0%, #edf0f3 45%, #f2f4f7 100%);
+  border-radius:14px;
+  position:relative;
+  padding:3.5% 5% 0 5%;
+  display:flex; flex-direction:column; align-items:center;
+  font-family:'Vazirmatn', sans-serif;
+  color:#1a2332;
+  box-shadow:0 40px 90px -20px rgba(0,0,0,0.55), 0 0 0 1px rgba(150,165,180,0.4);
+  overflow:hidden;
+}
+/* outer silver line */
+.certificate::before{
+  content:"";
+  position:absolute; inset:9px;
+  border:2px solid rgba(140,158,175,0.75);
+  border-radius:10px;
+  pointer-events:none; z-index:2;
+}
+/* inner thin line */
+.certificate::after{
+  content:"";
+  position:absolute; inset:15px;
+  border:0.8px solid rgba(140,158,175,0.35);
+  border-radius:7px;
+  pointer-events:none; z-index:2;
+}
+/* ornamental corners */
+.cert-corner{position:absolute; width:48px; height:48px; z-index:3;}
+.cert-corner svg{width:100%; height:100%;}
+.cert-corner.tl{top:5px; left:5px;}
+.cert-corner.tr{top:5px; right:5px; transform:scaleX(-1);}
+.cert-corner.bl{bottom:5px; left:5px; transform:scaleY(-1);}
+.cert-corner.br{bottom:5px; right:5px; transform:scale(-1,-1);}
+
+.cert-watermark{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:13vw; font-weight:900; color:rgba(100,120,140,0.04);
+  letter-spacing:6px; pointer-events:none; white-space:nowrap; z-index:0;
+}
+
+.cert-inner{position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; width:100%; height:100%;}
+.cert-brand{font-size:0.95vw; font-weight:800; letter-spacing:4px; color:#6b8098; text-transform:uppercase; margin-top:0.2vw;}
+.cert-brand-fa{font-size:1.45vw; font-weight:800; color:#1a2332; letter-spacing:1px; margin-top:0.15vw;}
+
+.cert-photo{
+  width:9.5%; aspect-ratio:1/1; border-radius:50%; margin-top:1.2vw;
+  border:0.25vw solid rgba(140,158,175,0.7); overflow:hidden;
+  box-shadow:0 0.3vw 0.8vw -0.15vw rgba(100,130,160,0.35);
+  background:#c8d0d8;
+  flex-shrink:0;
+}
+.cert-photo img{width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;}
+
+.cert-name{
+  font-size:2.5vw; font-weight:900; color:#1a2332; margin-top:0.8vw;
+  letter-spacing:.5px;
+}
+.cert-presented{font-size:0.88vw; color:#5a6e80; margin-top:0.4vw; font-weight:500;}
+
+.cert-course-line{
+  font-size:1.25vw; font-weight:700; color:#1a2332; margin-top:1.2vw;
+  text-align:center; line-height:1.6; max-width:76%;
+}
+.cert-course-name{color:#2a6496; font-weight:900;}
+
+.cert-issuer-line{font-size:0.85vw; color:#5a6e80; margin-top:0.8vw; font-weight:500;}
+.cert-issuer-line b{color:#1a2332; font-weight:800;}
+
+.cert-score-row{
+  display:flex; align-items:center; gap:0.9vw; margin-top:1.2vw;
+  background:rgba(42,100,150,0.07); border:1px solid rgba(42,100,150,0.2);
+  padding:0.5vw 1.3vw; border-radius:99px;
+}
+.cert-score-label{font-size:0.82vw; font-weight:700; color:#2a6496;}
+.cert-score-num{font-size:1.25vw; font-weight:900; color:#2a6496;}
+
+.cert-bottom-row{
+  margin-top:auto; width:100%;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 6% 2vw 6%;
+}
+.cert-sig-block{text-align:center; width:28%;}
+.cert-sig-line{
+  border-top:1.2px solid rgba(140,158,175,0.6);
+  padding-top:0.35vw; margin-top:1.4vw;
+}
+.cert-sig-title{font-size:0.72vw; color:#6b8098; font-weight:600;}
+.cert-sig-name{font-size:0.82vw; color:#1a2332; font-weight:800; margin-top:0.1vw;}
+
+/* no seal — spacer keeps layout balanced */
+.cert-seal{ width:8%; aspect-ratio:1/1; }
+.cert-seal-ring{ display:none; }
+.cert-seal-inner{ display:none; }
+
+.cert-id-row{
+  position:absolute; bottom:1.3vw; left:50%; transform:translateX(-50%);
+  font-size:0.58vw; color:rgba(100,120,140,0.55); letter-spacing:1.5px; font-weight:600;
+  z-index:2; white-space:nowrap;
+}
+.cert-date-row{
+  position:absolute; bottom:1.3vw; right:3%;
+  font-size:0.65vw; color:#6b8098; font-weight:600; z-index:2; white-space:nowrap;
+}
+.cert-date-row-fa{
+  position:absolute; bottom:1.3vw; left:3%;
+  font-size:0.65vw; color:#6b8098; font-weight:600; z-index:2; white-space:nowrap;
+}
+
+/* ============ ADMIN PANEL ============ */
+#adminScreen{align-items:flex-start; justify-content:flex-start; padding:0; background:var(--navy-950);}
+.admin-shell{width:100%; min-height:100vh; display:flex; flex-direction:column;}
+.admin-topbar{
+  background:rgba(11,27,51,0.9); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(201,162,75,0.2);
+  padding:16px 20px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:20;
+}
+.admin-brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:15.5px; color:var(--cream-50);}
+.admin-brand-badge{
+  background:linear-gradient(180deg, var(--gold-400), var(--gold-500)); color:var(--navy-950);
+  font-size:10px; font-weight:900; padding:3px 9px; border-radius:7px; letter-spacing:.5px;
+}
+.admin-exit{
+  font-size:12.5px; color:rgba(245,240,230,0.6); display:flex; align-items:center; gap:6px;
+  padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.05);
+  transition:background .2s;
+}
+.admin-exit:hover{background:rgba(179,67,47,0.18); color:#e98b78;}
+.admin-exit svg{width:14px; height:14px;}
+
+.admin-tabs{
+  display:flex; gap:6px; padding:14px 16px 0; overflow-x:auto;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.admin-tab{
+  padding:11px 16px; font-size:13px; font-weight:700; color:rgba(245,240,230,0.5);
+  border-radius:11px 11px 0 0; white-space:nowrap; position:relative;
+  display:flex; align-items:center; gap:7px;
+}
+.admin-tab svg{width:14px; height:14px;}
+.admin-tab.active{color:var(--gold-300); background:rgba(201,162,75,0.08);}
+.admin-tab.active::after{
+  content:""; position:absolute; bottom:-1px; left:0; right:0; height:2px;
+  background:var(--gold-400);
+}
+
+.admin-body{flex:1; padding:24px 18px 60px; max-width:920px; width:100%; margin:0 auto;}
+.admin-pane{display:none; animation:fadeIn .3s ease;}
+.admin-pane.active{display:block;}
+
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;}
+.stat-card{
+  background:linear-gradient(135deg, var(--navy-800), var(--navy-900));
+  border:1px solid rgba(201,162,75,0.18); border-radius:16px; padding:16px;
+}
+.stat-num{font-size:24px; font-weight:900; color:var(--gold-300);}
+.stat-label{font-size:11.5px; color:rgba(245,240,230,0.5); margin-top:3px;}
+
+.admin-card{
+  background:linear-gradient(135deg, var(--navy-800), var(--navy-900));
+  border:1px solid rgba(201,162,75,0.18); border-radius:18px; padding:22px;
+  margin-bottom:18px;
+}
+.admin-card-title{font-size:15px; font-weight:800; color:var(--cream-50); margin-bottom:18px; display:flex; align-items:center; gap:8px;}
+.admin-card-title svg{width:16px; height:16px; stroke:var(--gold-400);}
+
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.form-grid .full{grid-column:1/-1;}
+.select-input{
+  width:100%; padding:13px 15px; border-radius:12px;
+  background:rgba(7,15,31,0.55); border:1px solid rgba(201,162,75,0.22);
+  color:var(--cream-50); font-size:14px; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23c9a24b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:left 14px center;
+}
+.score-slider-wrap{display:flex; align-items:center; gap:14px;}
+.score-slider{flex:1; height:6px; border-radius:99px; background:rgba(201,162,75,0.2); appearance:none; outline:none;}
+.score-slider::-webkit-slider-thumb{
+  appearance:none; width:20px; height:20px; border-radius:50%;
+  background:var(--gold-400); border:3px solid var(--navy-950); cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+.score-display{
+  width:54px; height:42px; border-radius:11px; background:rgba(44,110,79,0.18);
+  border:1px solid rgba(44,110,79,0.4); display:flex; align-items:center; justify-content:center;
+  font-weight:900; color:#7fd6ac; font-size:15px; flex-shrink:0;
+}
+
+.schedule-toggle{display:flex; align-items:center; gap:10px; margin-top:4px; cursor:pointer; user-select:none;}
+.toggle-switch{width:42px; height:24px; border-radius:99px; background:rgba(255,255,255,0.12); position:relative; transition:background .2s; flex-shrink:0;}
+.toggle-switch.on{background:var(--emerald-500);}
+.toggle-switch::after{
+  content:""; position:absolute; top:3px; right:3px; width:18px; height:18px; border-radius:50%;
+  background:#fff; transition:transform .2s;
+}
+.toggle-switch.on::after{transform:translateX(-18px);}
+.toggle-label{font-size:13px; color:rgba(245,240,230,0.75); font-weight:600;}
+
+.datetime-row{display:none; gap:12px; margin-top:12px;}
+.datetime-row.show{display:grid; grid-template-columns:1fr 1fr;}
+
+.generate-result{
+  margin-top:18px; padding:20px; border-radius:14px;
+  background:rgba(44,110,79,0.1); border:1px solid rgba(44,110,79,0.3);
+  text-align:center; display:none;
+  animation:popIn .35s ease;
+}
+.generate-result.show{display:block;}
+.generate-result-label{font-size:12px; color:#7fd6ac; font-weight:700; margin-bottom:8px;}
+.generate-result-code{font-size:30px; font-weight:900; color:var(--cream-50); letter-spacing:6px;}
+.generate-result-sub{font-size:11.5px; color:rgba(245,240,230,0.5); margin-top:8px;}
+.copy-code-btn{
+  margin-top:12px; padding:9px 18px; border-radius:10px; font-size:12.5px; font-weight:700;
+  background:rgba(255,255,255,0.08); color:var(--cream-50); display:inline-flex; gap:6px; align-items:center;
+}
+
+.user-list{display:flex; flex-direction:column; gap:10px;}
+.user-row{
+  display:flex; align-items:center; gap:13px; padding:13px 15px;
+  background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); border-radius:14px;
+  cursor:pointer; transition:background .15s, border-color .15s;
+}
+.user-row:hover{background:rgba(201,162,75,0.06); border-color:rgba(201,162,75,0.25);}
+.user-row-avatar{
+  width:42px; height:42px; border-radius:50%; overflow:hidden; flex-shrink:0;
+  border:1.5px solid rgba(201,162,75,0.4); background:var(--navy-700);
+}
+.user-row-avatar img{width:100%; height:100%; object-fit:cover;}
+.user-row-info{flex:1; min-width:0;}
+.user-row-name{font-size:14px; font-weight:700; color:var(--cream-50);}
+.user-row-name .en{font-size:11px; color:rgba(245,240,230,0.4); font-weight:500; margin-right:6px;}
+.user-row-date{font-size:11px; color:rgba(245,240,230,0.4); margin-top:2px;}
+.user-row-arrow{width:16px; height:16px; stroke:rgba(201,162,75,0.5); flex-shrink:0; transform:rotate(180deg);}
+.admin-empty{text-align:center; padding:40px 20px; color:rgba(245,240,230,0.4); font-size:13px;}
+
+.archive-card{
+  display:flex; align-items:center; gap:13px; padding:15px 16px;
+  background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); border-radius:14px;
+  margin-bottom:10px;
+}
+.archive-icon{
+  width:42px; height:42px; border-radius:11px; flex-shrink:0;
+  background:linear-gradient(160deg, var(--gold-300), var(--gold-500));
+  display:flex; align-items:center; justify-content:center; color:var(--navy-950); font-weight:900; font-size:13px;
+}
+.archive-info{flex:1; min-width:0;}
+.archive-name{font-size:13.5px; font-weight:700; color:var(--cream-50);}
+.archive-meta{font-size:11px; color:rgba(245,240,230,0.45); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap;}
+.archive-status{
+  font-size:10.5px; font-weight:800; padding:4px 9px; border-radius:7px; flex-shrink:0;
+}
+.archive-status.pending{background:rgba(201,162,75,0.15); color:var(--gold-300); border:1px solid rgba(201,162,75,0.3);}
+.archive-status.used{background:rgba(120,120,130,0.15); color:rgba(245,240,230,0.5); border:1px solid rgba(120,120,130,0.25);}
+.archive-status.scheduled{background:rgba(31,77,58,0.18); color:#7fd6ac; border:1px solid rgba(31,77,58,0.4);}
+
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(0);
+  background:var(--navy-800); border:1px solid rgba(201,162,75,0.35);
+  color:var(--cream-50); padding:13px 22px; border-radius:13px; font-size:13px; font-weight:600;
+  box-shadow:var(--shadow-deep); z-index:200; display:flex; align-items:center; gap:9px;
+  opacity:0; pointer-events:none; transition:opacity .3s, transform .3s;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-8px);}
+.toast svg{width:16px; height:16px; stroke:#7fd6ac; flex-shrink:0;}
+
+/* responsive */
+@media (max-width:640px){
+  .form-grid{grid-template-columns:1fr;}
+  .stat-row{grid-template-columns:1fr 1fr 1fr; gap:8px;}
+  .stat-num{font-size:19px;}
+  .field-row{grid-template-columns:1fr;}
+  .cert-stage{align-items:flex-start;}
+  /* BUG FIX #8: wider digit-boxes on small screens for Persian keyboards */
+  .digit-box{width:38px; height:48px; font-size:17px;}
+  .redeem-input-wrap{gap:6px;}
+}
+@media (min-width:1024px){
+  .main-content{padding-top:40px;}
+  .admin-body{padding-top:30px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important; transition-duration:.01ms !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ ONBOARDING / LOGIN ============ -->
+<div id="onboardingScreen" class="screen">
+  <div class="ob-card">
+    <div class="ob-crest">CS</div>
+    <div class="ob-title">CS Degree</div>
+    <div class="ob-sub">برای ورود، مشخصات خود را کامل کنید</div>
+
+    <div class="field-group">
+      <span class="field-label">نام و نام خانوادگی (فارسی)</span>
+      <div class="field-row">
+        <input id="firstNameFa" class="field-input" type="text" placeholder="نام" autocomplete="off">
+        <input id="lastNameFa" class="field-input" type="text" placeholder="نام خانوادگی" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <span class="field-label">نام و نام خانوادگی (انگلیسی)</span>
+      <div class="field-row">
+        <input id="firstNameEn" class="field-input" type="text" placeholder="First name" autocomplete="off" dir="ltr">
+        <input id="lastNameEn" class="field-input" type="text" placeholder="Last name" autocomplete="off" dir="ltr">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <span class="field-label">تصویر پروفایل</span>
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-preview" id="uploadPreview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f5f0e6" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+        </div>
+        <div>
+          <div class="upload-text-main">بارگزاری تصویر از گالری</div>
+          <div class="upload-text-sub">الزامی — برای ساخت مدرک استفاده می‌شود</div>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" class="hidden">
+      <div class="hint-error" id="uploadError">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e98b78" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span>برای ورود باید یک تصویر پروفایل بارگزاری کنید</span>
+      </div>
+    </div>
+
+    <div id="adminReveal">
+      <button class="admin-toggle-link" id="adminToggleBtn">⚜ کد پنل ادمین</button>
+    </div>
+
+    <button class="btn-primary" id="enterBtn">
+      <span class="btn-label">ورود به سایت</span>
+      <span class="btn-spinner"><span class="spin"></span></span>
+    </button>
+  </div>
+</div>
+
+<!-- ============ ADMIN PASSCODE MODAL ============ -->
+<div id="adminModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </div>
+    <div class="modal-title">ورود ادمین</div>
+    <div class="modal-sub">کد دسترسی پنل مدیریت را وارد کنید</div>
+    <input type="password" id="adminCodeInput" class="code-input" placeholder="••••••••" autocomplete="off">
+    <div class="lock-banner" id="adminLockBanner">به دلیل تلاش‌های ناموفق متعدد، ورود موقتاً قفل شد. لطفاً کمی صبر کنید.</div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="adminCancelBtn">انصراف</button>
+      <button class="btn-gold-sm" id="adminConfirmBtn">ورود</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="appShell">
+  <div class="topbar">
+    <div class="topbar-user">
+      <div class="topbar-avatar" id="topbarAvatar"></div>
+    </div>
+    <!-- BUG FIX #2: title is now the tap target for admin re-entry -->
+    <div class="topbar-title" id="topbarTitle"><span class="dot"></span>CS Degree</div>
+    <button class="logout-btn" id="logoutBtn" title="خروج">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+    </button>
+  </div>
+
+  <div class="main-content">
+    <div class="welcome-block">
+      <div class="welcome-avatar" id="welcomeAvatar"></div>
+      <div class="welcome-name" id="welcomeName">—</div>
+      <div class="welcome-sub">به پنل شخصی خودت خوش اومدی</div>
+    </div>
+
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+      تاریخچه مدارک
+    </div>
+    <div id="historyContainer"></div>
+  </div>
+
+  <div class="fab" id="fabBtn" title="دریافت مدرک">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </div>
+</div>
+
+<!-- ============ REDEEM CODE MODAL ============ -->
+<div id="redeemModal" class="modal-overlay hidden">
+  <div class="modal-card redeem-card">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M8.5 14.5L6 21l6-3 6 3-2.5-6.5"/></svg>
+    </div>
+    <div class="modal-title">دریافت مدرک</div>
+    <div class="modal-sub">کد ۱۲ رقمی مدرک خود را وارد کنید</div>
+    <div class="redeem-input-wrap" dir="ltr" style="flex-wrap:wrap; gap:6px;">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="0" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="1" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="2" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="3" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="4" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="5" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="6" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="7" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="8" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="9" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="10" dir="ltr">
+      <input maxlength="1" class="digit-box" inputmode="numeric" pattern="[0-9]*" data-i="11" dir="ltr">
+    </div>
+    <div class="redeem-msg" id="redeemMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="redeemCancelBtn">انصراف</button>
+      <button class="btn-gold-sm" id="redeemConfirmBtn">تایید کد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CERTIFICATE SCREEN ============ -->
+<div id="certScreen" class="screen hidden">
+  <div class="cert-toolbar">
+    <button class="cert-tool-btn" id="certBackBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      بازگشت
+    </button>
+    <button class="cert-tool-btn" id="certLangBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>
+      <span id="certLangBtnText">English Version</span>
+    </button>
+    <button class="cert-tool-btn gold" id="certDownloadBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 19h14"/></svg>
+      دانلود مدرک
+    </button>
+  </div>
+  <div class="cert-stage">
+    <div class="certificate" id="certificateEl">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADMIN PANEL ============ -->
+<div id="adminScreen" class="screen hidden">
+  <div class="admin-shell">
+    <div class="admin-topbar">
+      <div class="admin-brand">
+        CS Degree <span class="admin-brand-badge">ADMIN</span>
+      </div>
+      <button class="admin-exit" id="adminExitBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        خروج از پنل
+      </button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="codes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg>
+        کدهای کاربران
+      </button>
+      <button class="admin-tab" data-tab="issue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.8L21 11l-6.6 2.2L12 20l-2.4-6.8L3 11l6.6-2.2z"/></svg>
+        صدور مستقیم
+      </button>
+      <button class="admin-tab" data-tab="archive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/></svg>
+        آرشیو مدارک
+      </button>
+      <button class="admin-tab" data-tab="users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        کاربران سایت
+      </button>
+    </div>
+
+    <div class="admin-body">
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-num" id="statUsers">0</div><div class="stat-label">کاربران ثبت‌نام شده</div></div>
+        <div class="stat-card"><div class="stat-num" id="statCerts">0</div><div class="stat-label">کدهای فعال شده</div></div>
+        <div class="stat-card"><div class="stat-num" id="statPending">0</div><div class="stat-label">کدهای استفاده شده</div></div>
+      </div>
+
+      <!-- CODES PANE -->
+      <div class="admin-pane active" id="pane-codes">
+        <div class="admin-card">
+          <div class="admin-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg>
+            مدیریت کدهای کاربران
+          </div>
+          <div style="margin-bottom:14px;">
+            <span class="field-label">انتخاب کاربر</span>
+            <select class="select-input" id="codesUserSelect">
+              <option value="">— انتخاب کاربر —</option>
+            </select>
+          </div>
+          <div id="userCodesPanel" style="display:none;">
+            <div class="user-codes-header" id="userCodesHeader"></div>
+            <div id="userCodesList"></div>
+          </div>
+          <div id="userCodesEmpty" style="color:rgba(245,240,230,0.4); font-size:13px; text-align:center; padding:24px 0;">یک کاربر انتخاب کنید تا کدهای او نمایش داده شود</div>
+        </div>
+      </div>
+
+      <!-- ISSUE PANE -->
+      <div class="admin-pane" id="pane-issue">
+        <div class="admin-card" style="margin-bottom:16px;">
+          <div class="admin-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+            صدور مدرک برای خودم (ادمین)
+          </div>
+          <div class="form-grid">
+            <div class="full">
+              <span class="field-label">زبان برنامه‌نویسی</span>
+              <select class="select-input" id="selfIssueLang">
+                <option value="">— انتخاب زبان —</option>
+              </select>
+            </div>
+            <div class="full">
+              <span class="field-label">نمره نهایی (از ۱۰۰)</span>
+              <div class="score-slider-wrap">
+                <input type="range" min="0" max="100" value="95" class="score-slider" id="selfIssueScore">
+                <div class="score-display" id="selfIssueScoreDisplay">95</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-primary" id="selfIssueBtn" style="margin-top:18px;">
+            <span class="btn-label">صدور فوری مدرک</span>
+            <span class="btn-spinner"><span class="spin"></span></span>
+          </button>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            صدور مدرک برای هر کس
+          </div>
+          <div class="form-grid">
+            <div>
+              <span class="field-label">نام (فارسی)</span>
+              <input id="freeIssueFa" class="field-input" type="text" placeholder="مثال: علی رضایی">
+            </div>
+            <div>
+              <span class="field-label">نام (انگلیسی)</span>
+              <input id="freeIssueEn" class="field-input" type="text" placeholder="e.g. Ali Rezaei" dir="ltr">
+            </div>
+            <div class="full">
+              <span class="field-label">زبان برنامه‌نویسی</span>
+              <select class="select-input" id="freeIssueLang">
+                <option value="">— انتخاب زبان —</option>
+              </select>
+            </div>
+            <div class="full">
+              <span class="field-label">نمره نهایی (از ۱۰۰)</span>
+              <div class="score-slider-wrap">
+                <input type="range" min="0" max="100" value="85" class="score-slider" id="freeIssueScore">
+                <div class="score-display" id="freeIssueScoreDisplay">85</div>
+              </div>
+            </div>
+            <div class="full">
+              <span class="field-label" style="margin-bottom:8px;display:block;">تصویر پروفایل (اختیاری)</span>
+              <div class="upload-zone" id="freeIssueUploadZone" style="padding:14px;">
+                <div class="upload-preview" id="freeIssuePreview">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                  <div class="upload-text-main">بارگزاری تصویر</div>
+                  <div class="upload-text-sub">اختیاری — اگر آپلود نشود خالی می‌ماند</div>
+                </div>
+              </div>
+              <input type="file" id="freeIssueFileInput" accept="image/*" style="display:none;">
+            </div>
+          </div>
+          <button class="btn-primary" id="freeIssueBtn" style="margin-top:18px;">
+            <span class="btn-label">صدور مستقیم مدرک</span>
+            <span class="btn-spinner"><span class="spin"></span></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ARCHIVE PANE -->
+      <div class="admin-pane" id="pane-archive">
+        <div class="admin-card">
+          <div class="admin-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/></svg>
+            تاریخچه مدارک تولید شده
+          </div>
+          <div id="archiveList"></div>
+        </div>
+      </div>
+
+      <!-- USERS PANE -->
+      <div class="admin-pane" id="pane-users">
+        <div class="admin-card">
+          <div class="admin-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            افرادی که وارد سایت شدند
+          </div>
+          <div class="user-list" id="usersList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastText"></span>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ===================== CONSTANTS ===================== */
+const ADMIN_TRIGGER_FIRST_FA = "امیر حسین";
+const ADMIN_TRIGGER_LAST_FA = "نادری";
+const ADMIN_CODE = "AAmirhosein16$$";
+const LS_KEYS = {
+  currentUser: "csd_currentUser",
+  allUsers: "csd_allUsers",
+  certificates: "csd_certificates",
+  history: "csd_history_",
+  adminAuthed: "csd_adminAuthed",
+  userCodes: "csd_ucodes_"
+};
+
+// 12 popular programming languages
+const LANG_CODES = [
+  { key: 'python',     label: 'Python' },
+  { key: 'javascript', label: 'JavaScript' },
+  { key: 'java',       label: 'Java' },
+  { key: 'csharp',     label: 'C#' },
+  { key: 'cpp',        label: 'C++' },
+  { key: 'typescript', label: 'TypeScript' },
+  { key: 'kotlin',     label: 'Kotlin' },
+  { key: 'swift',      label: 'Swift' },
+  { key: 'go',         label: 'Go' },
+  { key: 'rust',       label: 'Rust' },
+  { key: 'php',        label: 'PHP' },
+  { key: 'ruby',       label: 'Ruby' }
+];
+
+let uploadedPhotoDataUrl = null;
+let adminFailCount = 0;
+let adminLockUntil = 0;
+
+/* ===================== UTILITIES ===================== */
+function $(sel){ return document.querySelector(sel); }
+function $all(sel){ return Array.from(document.querySelectorAll(sel)); }
+function uid(){ return 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function genSixDigit(){ return String(Math.floor(100000 + Math.random()*900000)); }
+function genTwelveDigit(){
+  return Array.from({length:12}, () => Math.floor(Math.random()*10)).join('');
+}
+function getUserCodes(userId){ return loadJSON(LS_KEYS.userCodes + userId, null); }
+function saveUserCodes(userId, arr){ saveJSON(LS_KEYS.userCodes + userId, arr); }
+
+/** Generate 12 pre-codes for a new user (all inactive, no score yet) */
+function generateUserCodeSet(userId){
+  return LANG_CODES.map(lang => ({
+    codeId: 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8),
+    code: genTwelveDigit(),
+    langKey: lang.key,
+    langLabel: lang.label,
+    active: false,
+    score: null,
+    used: false,
+    usedAt: null,
+    createdAt: nowIso()
+  }));
+}
+function nowIso(){ return new Date().toISOString(); }
+function fmtDateFa(iso){
+  try{
+    const d = new Date(iso);
+    return d.toLocaleDateString('fa-IR', {year:'numeric', month:'long', day:'numeric'});
+  }catch(e){ return iso; }
+}
+function fmtDateEn(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+}
+function fmtDateFaShort(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('fa-IR', {year:'numeric', month:'2-digit', day:'2-digit'});
+}
+function escapeHtml(str){
+  return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function showToast(msg){
+  const t = $('#toast');
+  $('#toastText').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* ===================== FIREBASE-BACKED STORAGE ===================== */
+/* Keeps every existing call to loadJSON/saveJSON perfectly synchronous (no other
+   code below had to change), while transparently mirroring data to Firestore so
+   it survives across browsers/devices instead of being stuck in localStorage. */
+const FB_COLLECTION = "csd_data";
+let __fbReady = false;
+const __fbQueue = [];
+
+function __fbWriteThrough(key, val){
+  if(!window.__csdFirebase) return;
+  const job = () => window.__csdFirebase.setDoc(FB_COLLECTION, key, val);
+  if(__fbReady){ job(); } else { __fbQueue.push(job); }
+}
+
+async function __fbPullAll(){
+  if(!window.__csdFirebase) return;
+  const keys = [LS_KEYS.currentUser, LS_KEYS.allUsers, LS_KEYS.certificates, LS_KEYS.adminAuthed];
+  // Pull base keys plus every per-user history key we know about from allUsers.
+  try{
+    const remoteUsers = await window.__csdFirebase.getDoc(FB_COLLECTION, LS_KEYS.allUsers);
+    if(Array.isArray(remoteUsers)){
+      remoteUsers.forEach(u => {
+        if(u && u.id){
+          keys.push(LS_KEYS.history + u.id);
+          keys.push(LS_KEYS.userCodes + u.id);
+        }
+      });
+    }
+  }catch(e){ console.error(e); }
+
+  await Promise.all(keys.map(async (key) => {
+    try{
+      const remoteVal = await window.__csdFirebase.getDoc(FB_COLLECTION, key);
+      if(remoteVal !== undefined){
+        localStorage.setItem(key, JSON.stringify(remoteVal));
+      }
+    }catch(e){ console.error(e); }
+  }));
+
+  __fbReady = true;
+  while(__fbQueue.length){ __fbQueue.shift()(); }
+}
+
+function loadJSON(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  }catch(e){ return fallback; }
+}
+function saveJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ console.error(e); }
+  __fbWriteThrough(key, val);
+}
+
+function getAllUsers(){ return loadJSON(LS_KEYS.allUsers, []); }
+function saveAllUsers(arr){ saveJSON(LS_KEYS.allUsers, arr); }
+function getCertificates(){ return loadJSON(LS_KEYS.certificates, []); }
+function saveCertificates(arr){ saveJSON(LS_KEYS.certificates, arr); }
+function getCurrentUser(){ return loadJSON(LS_KEYS.currentUser, null); }
+function setCurrentUser(u){ saveJSON(LS_KEYS.currentUser, u); }
+function getUserHistory(userId){ return loadJSON(LS_KEYS.history + userId, []); }
+function saveUserHistory(userId, arr){ saveJSON(LS_KEYS.history + userId, arr); }
+
+/* ===================== ONBOARDING LOGIC ===================== */
+const uploadZone = $('#uploadZone');
+const fileInput = $('#fileInput');
+const uploadPreview = $('#uploadPreview');
+const uploadError = $('#uploadError');
+
+uploadZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    showToast('فقط فایل تصویری مجاز است');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    uploadedPhotoDataUrl = ev.target.result;
+    uploadPreview.innerHTML = `<img src="${uploadedPhotoDataUrl}" alt="پروفایل">`;
+    uploadZone.classList.add('has-image');
+    uploadError.classList.remove('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+function checkAdminTrigger(){
+  const fn = $('#firstNameFa').value.trim();
+  const ln = $('#lastNameFa').value.trim();
+  const reveal = $('#adminReveal');
+  if(fn === ADMIN_TRIGGER_FIRST_FA && ln === ADMIN_TRIGGER_LAST_FA){
+    reveal.classList.add('open');
+  } else {
+    reveal.classList.remove('open');
+  }
+}
+$('#firstNameFa').addEventListener('input', checkAdminTrigger);
+$('#lastNameFa').addEventListener('input', checkAdminTrigger);
+
+/* ===================== ADMIN MODAL OPEN / CLOSE ===================== */
+function openAdminModal(){
+  $('#adminModal').classList.remove('hidden');
+  $('#adminCodeInput').value = '';
+  $('#adminLockBanner').classList.remove('show');
+  setTimeout(()=> $('#adminCodeInput').focus(), 100);
+}
+function closeAdminModal(){
+  $('#adminModal').classList.add('hidden');
+}
+
+$('#adminToggleBtn').addEventListener('click', openAdminModal);
+$('#adminCancelBtn').addEventListener('click', closeAdminModal);
+
+$('#adminCodeInput').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') $('#adminConfirmBtn').click();
+});
+
+/* BUG FIX #7: adminConfirmBtn now correctly hides appShell before entering panel */
+$('#adminConfirmBtn').addEventListener('click', () => {
+  const now = Date.now();
+  if(now < adminLockUntil){
+    $('#adminLockBanner').classList.add('show');
+    return;
+  }
+  const val = $('#adminCodeInput').value;
+  if(val === ADMIN_CODE){
+    saveJSON(LS_KEYS.adminAuthed, true);
+    closeAdminModal();
+
+    // If there's no session yet, register admin as a user from the onboarding form
+    if(!getCurrentUser()){
+      const fnFa = $('#firstNameFa').value.trim();
+      const lnFa = $('#lastNameFa').value.trim();
+      const fnEn = $('#firstNameEn').value.trim();
+      const lnEn = $('#lastNameEn').value.trim();
+      if(fnFa && lnFa && fnEn && lnEn && uploadedPhotoDataUrl){
+        const adminUser = {
+          id: uid(),
+          firstNameFa: fnFa, lastNameFa: lnFa,
+          firstNameEn: fnEn, lastNameEn: lnEn,
+          photo: uploadedPhotoDataUrl,
+          joinedAt: nowIso()
+        };
+        setCurrentUser(adminUser);
+        const all = getAllUsers();
+        // avoid duplicate if already in list
+        if(!all.find(u => u.firstNameFa === adminUser.firstNameFa && u.lastNameFa === adminUser.lastNameFa)){
+          all.push(adminUser);
+          saveAllUsers(all);
+          // Generate 12 pre-codes for admin user too
+          const codes = generateUserCodeSet(adminUser.id);
+          saveUserCodes(adminUser.id, codes);
+        }
+      } else {
+        showToast('برای ثبت کامل حساب ادمین، نام و تصویر پروفایل را هم تکمیل کنید');
+      }
+    }
+
+    enterAdminPanel();
+  } else {
+    adminFailCount++;
+    $('#adminCodeInput').value = '';
+    $('#adminCodeInput').style.borderColor = '#b3432f';
+    setTimeout(()=> $('#adminCodeInput').style.borderColor = '', 400);
+    if(adminFailCount >= 4){
+      adminLockUntil = Date.now() + 20000;
+      $('#adminLockBanner').classList.add('show');
+      adminFailCount = 0;
+    } else {
+      showToast('کد وارد شده صحیح نیست');
+    }
+  }
+});
+
+$('#enterBtn').addEventListener('click', () => {
+  const fnFa = $('#firstNameFa').value.trim();
+  const lnFa = $('#lastNameFa').value.trim();
+  const fnEn = $('#firstNameEn').value.trim();
+  const lnEn = $('#lastNameEn').value.trim();
+
+  if(!fnFa || !lnFa || !fnEn || !lnEn){
+    showToast('لطفاً تمام فیلدهای نام را پر کنید');
+    return;
+  }
+  if(!uploadedPhotoDataUrl){
+    uploadError.classList.add('show');
+    showToast('بارگزاری تصویر پروفایل الزامی است');
+    return;
+  }
+
+  // Block admin name from entering as regular user
+  if(fnFa === ADMIN_TRIGGER_FIRST_FA && lnFa === ADMIN_TRIGGER_LAST_FA){
+    openAdminModal();
+    return;
+  }
+
+  const btn = $('#enterBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const user = {
+      id: uid(),
+      firstNameFa: fnFa, lastNameFa: lnFa,
+      firstNameEn: fnEn, lastNameEn: lnEn,
+      photo: uploadedPhotoDataUrl,
+      joinedAt: nowIso()
+    };
+    setCurrentUser(user);
+
+    const all = getAllUsers();
+    all.push(user);
+    saveAllUsers(all);
+
+    // Generate 12 pre-codes for this new user
+    const codes = generateUserCodeSet(user.id);
+    saveUserCodes(user.id, codes);
+
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    enterMainApp(user);
+  }, 650);
+});
+
+/* ===================== MAIN APP ===================== */
+function enterMainApp(user){
+  $('#onboardingScreen').classList.add('hidden');
+  /* BUG FIX #7: ensure admin panel is also hidden */
+  $('#adminScreen').classList.add('hidden');
+  $('#appShell').classList.add('active');
+
+  const avatarImg = `<img src="${user.photo}" alt="">`;
+  $('#topbarAvatar').innerHTML = avatarImg;
+  $('#welcomeAvatar').innerHTML = avatarImg;
+  $('#welcomeName').textContent = user.firstNameFa + ' ' + user.lastNameFa;
+
+  renderHistory(user.id);
+}
+
+function renderHistory(userId){
+  const history = getUserHistory(userId);
+  const container = $('#historyContainer');
+  if(history.length === 0){
+    container.innerHTML = `
+      <div class="history-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 2l2.4 6.8L21 11l-6.6 2.2L12 20l-2.4-6.8L3 11l6.6-2.2z"/></svg>
+        <div class="history-empty-title">هنوز مدرکی دریافت نکرده‌اید</div>
+        <div class="history-empty-sub">با دکمه + پایین صفحه، کد دریافت مدرک خود را وارد کنید</div>
+      </div>`;
+    return;
+  }
+  container.innerHTML = `<div class="history-grid">${history.slice().reverse().map(h => `
+    <div class="history-card" data-hist-id="${h.id}">
+      <div class="history-icon">${escapeHtml(h.certData && h.certData.lang ? h.certData.lang.slice(0,2) : 'CS')}</div>
+      <div class="history-info">
+        <div class="history-lang-title">${escapeHtml(h.courseTitle)}</div>
+        <div class="history-date">${fmtDateFa(h.downloadedAt)}</div>
+      </div>
+      <div class="history-score-chip">${h.score} / 100</div>
+    </div>
+  `).join('')}</div>`;
+
+  // BUG FIX #3: pass the saved lang from historyEntry, not always 'fa'
+  $all('.history-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const histId = card.getAttribute('data-hist-id');
+      const h = history.find(x => x.id === histId);
+      if(h) openCertificateView(h.certData, h.lang || 'fa', false);
+    });
+  });
+}
+
+$('#logoutBtn').addEventListener('click', () => {
+  showToast('برای امنیت حساب، خروج غیرفعال است');
+});
+
+/* ===================== REDEEM FLOW ===================== */
+const digitBoxes = $all('.digit-box');
+
+/* BUG FIX #8: robust Persian/Arabic digit normalizer */
+function toEnglishDigits(str){
+  return String(str || '').replace(/[\u06F0-\u06F9\u0660-\u0669]/g, (ch) => {
+    const code = ch.charCodeAt(0);
+    // Persian ۰-۹ = U+06F0–U+06F9
+    if(code >= 0x06F0 && code <= 0x06F9) return String(code - 0x06F0);
+    // Arabic-Indic ٠-٩ = U+0660–U+0669
+    if(code >= 0x0660 && code <= 0x0669) return String(code - 0x0660);
+    return ch;
+  });
+}
+
+digitBoxes.forEach((box, idx) => {
+  box.addEventListener('input', () => {
+    /* BUG FIX #8: normalise BEFORE stripping; handles IME composition too */
+    let val = toEnglishDigits(box.value).replace(/[^0-9]/g,'');
+    if(val.length > 1){
+      const chars = val.split('');
+      chars.forEach((ch, i) => { if(digitBoxes[idx+i]) digitBoxes[idx+i].value = ch; });
+      const nextIdx = Math.min(idx + chars.length, digitBoxes.length - 1);
+      digitBoxes[nextIdx].focus();
+      return;
+    }
+    box.value = val;
+    if(box.value && idx < digitBoxes.length - 1){
+      digitBoxes[idx+1].focus();
+    }
+  });
+  box.addEventListener('keydown', (e) => {
+    if(e.key === 'Backspace' && !box.value && idx > 0){
+      digitBoxes[idx-1].value = '';
+      digitBoxes[idx-1].focus();
+    }
+    if(e.key === 'ArrowRight' && idx < digitBoxes.length - 1){ e.preventDefault(); digitBoxes[idx+1].focus(); }
+    if(e.key === 'ArrowLeft' && idx > 0){ e.preventDefault(); digitBoxes[idx-1].focus(); }
+    if(e.key === 'Enter') $('#redeemConfirmBtn').click();
+  });
+  box.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const raw = (e.clipboardData || window.clipboardData).getData('text') || '';
+    const text = toEnglishDigits(raw).replace(/[^0-9]/g,'').slice(0,12);
+    digitBoxes.forEach(b => b.value = '');
+    text.split('').forEach((ch,i) => { if(digitBoxes[i]) digitBoxes[i].value = ch; });
+    if(text.length){
+      const focusIdx = Math.min(text.length, 11);
+      digitBoxes[focusIdx].focus();
+    }
+  });
+  /* BUG FIX #8: on focus select all so user can overtype easily */
+  box.addEventListener('focus', () => box.select());
+});
+
+$('#fabBtn').addEventListener('click', () => {
+  $('#redeemModal').classList.remove('hidden');
+  digitBoxes.forEach(b => b.value = '');
+  $('#redeemMsg').textContent = '';
+  $('#redeemMsg').className = 'redeem-msg';
+  setTimeout(()=> digitBoxes[0].focus(), 100);
+});
+$('#redeemCancelBtn').addEventListener('click', () => {
+  $('#redeemModal').classList.add('hidden');
+});
+
+$('#redeemConfirmBtn').addEventListener('click', () => {
+  const code = digitBoxes.map(b => b.value).join('');
+  const msgEl = $('#redeemMsg');
+  if(code.length !== 12 || !/^\d{12}$/.test(code)){
+    msgEl.textContent = 'لطفاً تمام ۱۲ رقم کد را وارد کنید';
+    msgEl.className = 'redeem-msg err';
+    return;
+  }
+
+  const user = getCurrentUser();
+  if(!user){
+    msgEl.textContent = 'ابتدا باید وارد حساب کاربری خود شوید';
+    msgEl.className = 'redeem-msg err';
+    return;
+  }
+
+  // Look up code only in this user's code set
+  const userCodes = getUserCodes(user.id);
+  if(!userCodes){
+    msgEl.textContent = 'کد مدرک برای این حساب یافت نشد';
+    msgEl.className = 'redeem-msg err';
+    return;
+  }
+
+  const codeEntry = userCodes.find(c => c.code === code);
+
+  if(!codeEntry){
+    msgEl.textContent = 'این کد متعلق به حساب شما نیست یا معتبر نیست';
+    msgEl.className = 'redeem-msg err';
+    return;
+  }
+  if(!codeEntry.active){
+    msgEl.textContent = 'این کد هنوز توسط ادمین فعال نشده است';
+    msgEl.className = 'redeem-msg err';
+    return;
+  }
+  if(codeEntry.used){
+    msgEl.textContent = 'این کد قبلاً استفاده شده است';
+    msgEl.className = 'redeem-msg err';
+    return;
+  }
+
+  msgEl.textContent = 'کد تایید شد ✓';
+  msgEl.className = 'redeem-msg ok';
+
+  codeEntry.used = true;
+  codeEntry.usedAt = nowIso();
+  saveUserCodes(user.id, userCodes);
+
+  // Build a cert-like object for display
+  const cert = {
+    id: codeEntry.codeId,
+    code: codeEntry.code,
+    nameFa: user.firstNameFa + ' ' + user.lastNameFa,
+    nameEn: user.firstNameEn + ' ' + user.lastNameEn,
+    lang: codeEntry.langLabel,
+    score: codeEntry.score,
+    createdAt: nowIso(),
+    used: true,
+    userPhoto: user.photo,
+    linkedUserId: user.id
+  };
+
+  const hist = getUserHistory(user.id);
+  const courseTitle = 'گواهی ' + codeEntry.langLabel;
+  const historyEntry = {
+    id: uid(),
+    certData: cert,
+    lang: 'fa',
+    score: codeEntry.score,
+    courseTitle: courseTitle,
+    downloadedAt: nowIso()
+  };
+  hist.push(historyEntry);
+  saveUserHistory(user.id, hist);
+  renderHistory(user.id);
+
+  setTimeout(() => {
+    $('#redeemModal').classList.add('hidden');
+    openCertificateView(cert, 'fa', true);
+  }, 500);
+});
+
+/* ===================== CERTIFICATE RENDER ===================== */
+let activeCertData = null;
+let activeCertLang = 'fa';
+
+function buildCertificateHTML(cert, lang){
+  const isFa = lang === 'fa';
+  const name = isFa ? (cert.nameFa || '') : (cert.nameEn || cert.nameFa || '');
+
+  /* BUG FIX #4: resolve photo — cert's own photo first, then current user's */
+  const cu = getCurrentUser();
+  const photo = cert.userPhoto || (cu && cu.photo) || '';
+
+  const courseLineFa = `دوره برنامه‌نویسی <span class="cert-course-name">${escapeHtml(cert.lang || '')}</span> را با موفقیت به پایان رسانده است`;
+  const courseLineEn = `has successfully completed the <span class="cert-course-name">${escapeHtml(cert.lang || '')}</span> programming course`;
+
+  const issuedFa = `بدین وسیله توسط <b>Code Studio</b> گواهی می‌شود`;
+  const issuedEn = `This is to certify, issued by <b>Code Studio</b>`;
+
+  const id = cert.code || '';
+  const createdAt = cert.createdAt || nowIso();
+  const dateFa = fmtDateFa(createdAt);
+  const dateEn = fmtDateEn(createdAt);
+
+  const silverCorner = `<svg viewBox="0 0 48 48" fill="none"><path d="M2 46V16C2 8.268 8.268 2 16 2H46" stroke="rgba(140,158,175,0.85)" stroke-width="2.5"/><path d="M7 46V19C7 13.477 11.477 9 17 9H46" stroke="rgba(140,158,175,0.4)" stroke-width="0.9"/><circle cx="11" cy="11" r="2.5" fill="rgba(140,158,175,0.7)"/><circle cx="6" cy="6" r="1.2" fill="rgba(140,158,175,0.4)"/></svg>`;
+
+  return `
+    <div class="cert-corner tl">${silverCorner}</div>
+    <div class="cert-corner tr">${silverCorner}</div>
+    <div class="cert-corner bl">${silverCorner}</div>
+    <div class="cert-corner br">${silverCorner}</div>
+    <div class="cert-watermark">CS</div>
+    <div class="cert-inner" dir="${isFa ? 'rtl' : 'ltr'}">
+      <div class="cert-brand">CODE STUDIO</div>
+      <div class="cert-brand-fa">${isFa ? 'گواهینامه تکمیل دوره' : 'CERTIFICATE OF COMPLETION'}</div>
+
+      <div class="cert-photo">${photo ? `<img src="${photo}" alt="">` : ''}</div>
+      <div class="cert-name">${escapeHtml(name)}</div>
+      <div class="cert-presented">${isFa ? 'این مدرک به نام فرد فوق صادر شده است' : 'This certificate is proudly presented to the above named individual'}</div>
+
+      <div class="cert-course-line">${isFa ? courseLineFa : courseLineEn}</div>
+      <div class="cert-issuer-line">${isFa ? issuedFa : issuedEn}</div>
+
+      <div class="cert-score-row">
+        <span class="cert-score-label">${isFa ? 'نمره نهایی' : 'Final Score'}</span>
+        <span class="cert-score-num">${cert.score != null ? cert.score : '—'} / 100</span>
+      </div>
+
+      <div class="cert-bottom-row">
+        <div class="cert-sig-block">
+          <div class="cert-sig-line">
+            <div class="cert-sig-name">Amirhosein Naderi</div>
+            <div class="cert-sig-title">${isFa ? 'مدیر دوره' : 'Course Director'}</div>
+          </div>
+        </div>
+        <div style="width:8%;"></div>
+        <div class="cert-sig-block">
+          <div class="cert-sig-line">
+            <div class="cert-sig-name">Code Studio</div>
+            <div class="cert-sig-title">${isFa ? 'صادرکننده گواهی' : 'Issuing Authority'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-id-row">ID: ${escapeHtml(id)}</div>
+    <div class="cert-date-row">${dateEn}</div>
+    <div class="cert-date-row-fa">${dateFa}</div>
+  `;
+}
+
+let certCallerIsAdmin = false;
+
+function openCertificateView(cert, lang, fromFab, fromAdmin){
+  activeCertData = cert;
+  activeCertLang = lang || 'fa';
+  certCallerIsAdmin = !!fromAdmin;
+  $('#certificateEl').innerHTML = buildCertificateHTML(cert, activeCertLang);
+  $('#certLangBtnText').textContent = activeCertLang === 'fa' ? 'English Version' : 'نسخه فارسی';
+  if(certCallerIsAdmin){
+    $('#adminScreen').classList.add('hidden');
+  }
+  $('#certScreen').classList.remove('hidden');
+}
+
+$('#certBackBtn').addEventListener('click', () => {
+  $('#certScreen').classList.add('hidden');
+  if(certCallerIsAdmin){
+    $('#adminScreen').classList.remove('hidden');
+    // Return to issue pane
+    $all('.admin-tab').forEach(t => t.classList.remove('active'));
+    $all('.admin-pane').forEach(p => p.classList.remove('active'));
+    document.querySelector('.admin-tab[data-tab="issue"]').classList.add('active');
+    $('#pane-issue').classList.add('active');
+  }
+});
+$('#certLangBtn').addEventListener('click', () => {
+  activeCertLang = activeCertLang === 'fa' ? 'en' : 'fa';
+  $('#certificateEl').innerHTML = buildCertificateHTML(activeCertData, activeCertLang);
+  $('#certLangBtnText').textContent = activeCertLang === 'fa' ? 'English Version' : 'نسخه فارسی';
+});
+
+$('#certDownloadBtn').addEventListener('click', async () => {
+  const btn = $('#certDownloadBtn');
+  const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;"></span> در حال آماده‌سازی...';
+  btn.disabled = true;
+  try{
+    await downloadCertificateAsImage();
+  }catch(e){
+    console.error(e);
+    showToast('خطا در دانلود مدرک');
+  }
+  btn.innerHTML = original;
+  btn.disabled = false;
+});
+
+/* BUG FIX #9: allowTaint:true so base64 images render; foreignObjectRendering:false for compat */
+async function downloadCertificateAsImage(){
+  const cert = activeCertData;
+  const lang = activeCertLang;
+  const isFa = lang === 'fa';
+  const cu = getCurrentUser();
+  const photo = cert.userPhoto || (cu && cu.photo) || '';
+  const name = isFa ? (cert.nameFa || '') : (cert.nameEn || cert.nameFa || '');
+  const score = cert.score != null ? String(cert.score) : '—';
+  const createdAt = cert.createdAt || nowIso();
+  const dateFa = fmtDateFa(createdAt);
+  const dateEn = fmtDateEn(createdAt);
+  const id = cert.code || '';
+  const langName = cert.lang || '';
+
+  const W = 1600, H = 900;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // ── helpers ──────────────────────────────────────────
+  const silver = (a=1) => `rgba(140,158,175,${a})`;
+  const navy   = '#1a2332';
+  const steel  = '#2a6496';
+  const muted  = '#6b8098';
+  const dim    = '#5a6e80';
+
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+    ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+    ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+    ctx.closePath();
+  }
+
+  function drawCorner(cx,cy, flipX,flipY){
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.scale(flipX?-1:1, flipY?-1:1);
+    // outer arm
+    ctx.beginPath();
+    ctx.moveTo(2,46); ctx.lineTo(2,16);
+    ctx.arcTo(2,2,16,2,14); ctx.lineTo(46,2);
+    ctx.strokeStyle=silver(0.85); ctx.lineWidth=2.5; ctx.stroke();
+    // inner arm
+    ctx.beginPath();
+    ctx.moveTo(7,46); ctx.lineTo(7,19);
+    ctx.arcTo(7,7,19,7,12); ctx.lineTo(46,7);
+    ctx.strokeStyle=silver(0.4); ctx.lineWidth=0.9; ctx.stroke();
+    // dots
+    ctx.fillStyle=silver(0.7); ctx.beginPath(); ctx.arc(11,11,2.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=silver(0.4); ctx.beginPath(); ctx.arc(6,6,1.2,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // load photo
+  let photoImg = null;
+  if(photo){
+    try{
+      photoImg = await new Promise((res,rej)=>{
+        const img = new Image();
+        img.crossOrigin='anonymous';
+        img.onload=()=>res(img);
+        img.onerror=()=>res(null);
+        img.src=photo;
+      });
+    }catch(e){ photoImg=null; }
+  }
+
+  await document.fonts.ready;
+
+  // ── BACKGROUND ────────────────────────────────────────
+  // base gradient
+  const bgGrad = ctx.createLinearGradient(0,0,W*0.3,H);
+  bgGrad.addColorStop(0,'#f4f6f8');
+  bgGrad.addColorStop(0.45,'#edf0f3');
+  bgGrad.addColorStop(1,'#f2f4f7');
+  roundRect(0,0,W,H,14);
+  ctx.fillStyle=bgGrad; ctx.fill();
+
+  // top radial glow
+  const tGrad = ctx.createRadialGradient(W/2,0,0,W/2,0,W*0.5);
+  tGrad.addColorStop(0,'rgba(200,210,220,0.25)');
+  tGrad.addColorStop(1,'rgba(200,210,220,0)');
+  roundRect(0,0,W,H,14);
+  ctx.fillStyle=tGrad; ctx.fill();
+
+  // ── BORDERS ───────────────────────────────────────────
+  roundRect(9,9,W-18,H-18,10);
+  ctx.strokeStyle=silver(0.75); ctx.lineWidth=2; ctx.stroke();
+
+  roundRect(15,15,W-30,H-30,7);
+  ctx.strokeStyle=silver(0.35); ctx.lineWidth=0.8; ctx.stroke();
+
+  // ── CORNER ORNAMENTS ──────────────────────────────────
+  drawCorner(5,5,    false,false);
+  drawCorner(W-5,5,  true, false);
+  drawCorner(5,H-5,  false,true);
+  drawCorner(W-5,H-5,true, true);
+
+  // ── WATERMARK ─────────────────────────────────────────
+  ctx.save();
+  ctx.font=`900 ${Math.round(W*0.13)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle='rgba(100,120,140,0.04)';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('CS', W/2, H/2);
+  ctx.restore();
+
+  // ── CONTENT ───────────────────────────────────────────
+  let cy = H*0.06; // current y cursor
+
+  // CODE STUDIO label
+  ctx.font=`800 ${Math.round(W*0.0095)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=muted; ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText(isFa ? 'استودیوی کد' : 'CODE STUDIO', W/2, cy);
+  cy += Math.round(W*0.0095)*1.4;
+
+  // Title
+  ctx.font=`800 ${Math.round(W*0.0145)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=navy;
+  ctx.fillText(isFa ? 'گواهینامه تکمیل دوره' : 'CERTIFICATE OF COMPLETION', W/2, cy);
+  cy += Math.round(W*0.0145)*1.5 + H*0.012;
+
+  // Photo
+  const photoR = Math.round(W*0.048);
+  const photoX = W/2;
+  const photoY = cy + photoR;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(photoX, photoY, photoR, 0, Math.PI*2); ctx.clip();
+  if(photoImg){
+    ctx.drawImage(photoImg, photoX-photoR, photoY-photoR, photoR*2, photoR*2);
+  } else {
+    ctx.fillStyle='#c8d0d8'; ctx.fill();
+  }
+  ctx.restore();
+  // circle border
+  ctx.beginPath(); ctx.arc(photoX, photoY, photoR, 0, Math.PI*2);
+  ctx.strokeStyle=silver(0.7); ctx.lineWidth=Math.round(W*0.0025); ctx.stroke();
+  cy = photoY + photoR + H*0.018;
+
+  // Name
+  ctx.font=`900 ${Math.round(W*0.026)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=navy; ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText(name, W/2, cy);
+  cy += Math.round(W*0.026)*1.3 + H*0.006;
+
+  // Presented line
+  ctx.font=`500 ${Math.round(W*0.009)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=dim;
+  ctx.fillText(isFa ? 'این مدرک به نام فرد فوق صادر شده است' : 'This certificate is proudly presented to the above named individual', W/2, cy);
+  cy += Math.round(W*0.009)*1.5 + H*0.014;
+
+  // Course line — two-tone (normal + colored lang name)
+  const fsCourse = Math.round(W*0.0125);
+  ctx.font=`700 ${fsCourse}px 'Vazirmatn',sans-serif`;
+  ctx.textBaseline='top';
+  if(isFa){
+    const before = `دوره برنامه‌نویسی `;
+    const after  = ` را با موفقیت به پایان رسانده است`;
+    const wBefore = ctx.measureText(before).width;
+    const wLang   = ctx.measureText(langName).width;
+    const wAfter  = ctx.measureText(after).width;
+    const total   = wBefore + wLang + wAfter;
+    // RTL: right-to-left order on canvas — draw with textAlign='right' from right side
+    const startX  = W/2 + total/2;
+    ctx.textAlign='left';
+    // draw RTL segments right→left
+    ctx.fillStyle=navy;
+    ctx.fillText(before, startX - total, cy);
+    ctx.fillStyle=steel;
+    ctx.fillText(langName, startX - total + wBefore, cy);
+    ctx.fillStyle=navy;
+    ctx.fillText(after,  startX - total + wBefore + wLang, cy);
+  } else {
+    const before = `has successfully completed the `;
+    const after  = ` programming course`;
+    const wBefore = ctx.measureText(before).width;
+    const wLang   = ctx.measureText(langName).width;
+    const total   = wBefore + wLang + ctx.measureText(after).width;
+    const startX  = W/2 - total/2;
+    ctx.textAlign='left';
+    ctx.fillStyle=navy; ctx.fillText(before, startX, cy);
+    ctx.fillStyle=steel; ctx.fillText(langName, startX+wBefore, cy);
+    ctx.fillStyle=navy; ctx.fillText(after, startX+wBefore+wLang, cy);
+  }
+  cy += fsCourse*1.5 + H*0.010;
+
+  // Issuer line
+  ctx.font=`500 ${Math.round(W*0.0085)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=dim; ctx.textAlign='center';
+  const issuerText = isFa
+    ? `بدین وسیله توسط Code Studio گواهی می‌شود`
+    : `This is to certify, issued by Code Studio`;
+  ctx.fillText(issuerText, W/2, cy);
+  cy += Math.round(W*0.0085)*1.5 + H*0.013;
+
+  // Score pill
+  const fsScore = Math.round(W*0.0125);
+  const scoreLabel = isFa ? 'نمره نهایی' : 'Final Score';
+  const scoreText  = `${score} / 100`;
+  ctx.font=`700 ${Math.round(W*0.0082)}px 'Vazirmatn',sans-serif`;
+  const wLabel = ctx.measureText(scoreLabel).width;
+  ctx.font=`900 ${fsScore}px 'Vazirmatn',sans-serif`;
+  const wNum   = ctx.measureText(scoreText).width;
+  const gap=12, padH=20, padV=10;
+  const pillW = wLabel + wNum + gap + padH*2;
+  const pillH = fsScore + padV*2;
+  const pillX = W/2 - pillW/2;
+  // pill bg
+  roundRect(pillX, cy, pillW, pillH, pillH/2);
+  ctx.fillStyle='rgba(42,100,150,0.07)'; ctx.fill();
+  ctx.strokeStyle='rgba(42,100,150,0.2)'; ctx.lineWidth=1; ctx.stroke();
+  // label
+  ctx.font=`700 ${Math.round(W*0.0082)}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=steel; ctx.textAlign='left'; ctx.textBaseline='middle';
+  if(isFa){
+    // RTL: score number on left, label on right
+    ctx.fillText(scoreText, pillX+padH, cy+pillH/2);
+    ctx.font=`700 ${Math.round(W*0.0082)}px 'Vazirmatn',sans-serif`;
+    ctx.fillText(scoreLabel, pillX+padH+wNum+gap, cy+pillH/2);
+  } else {
+    ctx.fillText(scoreLabel, pillX+padH, cy+pillH/2);
+    ctx.font=`900 ${fsScore}px 'Vazirmatn',sans-serif`;
+    ctx.fillText(scoreText, pillX+padH+wLabel+gap, cy+pillH/2);
+  }
+  cy += pillH;
+
+  // ── SIGNATURE BLOCKS ─────────────────────────────────
+  const sigY = H - H*0.065 - H*0.072;
+  const lineY = sigY;
+  const textY = sigY + H*0.012;
+  const sigW  = W*0.22;
+  const leftX = W*0.12;
+  const rightX = W - W*0.12 - sigW;
+
+  // left sig line
+  ctx.strokeStyle=silver(0.6); ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(leftX, lineY); ctx.lineTo(leftX+sigW, lineY); ctx.stroke();
+  // right sig line
+  ctx.beginPath(); ctx.moveTo(rightX, lineY); ctx.lineTo(rightX+sigW, lineY); ctx.stroke();
+
+  ctx.textBaseline='top'; ctx.textAlign='center';
+  const fsName = Math.round(W*0.0082);
+  const fsTitle = Math.round(W*0.0072);
+
+  // left block
+  ctx.font=`800 ${fsName}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=navy;
+  ctx.fillText('Amirhosein Naderi', leftX+sigW/2, textY);
+  ctx.font=`600 ${fsTitle}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=muted;
+  ctx.fillText(isFa?'مدیر دوره':'Course Director', leftX+sigW/2, textY+fsName+4);
+
+  // right block
+  ctx.font=`800 ${fsName}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=navy;
+  ctx.fillText('Code Studio', rightX+sigW/2, textY);
+  ctx.font=`600 ${fsTitle}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=muted;
+  ctx.fillText(isFa?'صادرکننده گواهی':'Issuing Authority', rightX+sigW/2, textY+fsName+4);
+
+  // ── BOTTOM ROW ───────────────────────────────────────
+  const fsDate = Math.round(W*0.0065);
+  const bottomY = H - H*0.028;
+  ctx.font=`600 ${fsDate}px 'Vazirmatn',sans-serif`;
+  ctx.fillStyle=muted; ctx.textBaseline='bottom';
+
+  ctx.textAlign='left';  ctx.fillText(dateFa, W*0.03, bottomY);
+  ctx.textAlign='center'; ctx.fillStyle=silver(0.55);
+  ctx.fillText(`ID: ${id}`, W/2, bottomY);
+  ctx.textAlign='right'; ctx.fillStyle=muted;
+  ctx.fillText(dateEn, W*0.97, bottomY);
+
+  // ── EXPORT ───────────────────────────────────────────
+  await new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      if(!blob){ showToast('خطا در ساخت تصویر'); resolve(); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const nameRaw = (lang==='fa' ? cert.nameFa : (cert.nameEn||cert.nameFa)) || 'certificate';
+      a.href=url;
+      a.download=`CS-Degree-${nameRaw.replace(/\s+/g,'_')}-${lang}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+      resolve();
+    },'image/png');
+  });
+  showToast('مدرک با موفقیت دانلود شد');
+}
+
+  // Build a pixel-perfect offscreen container
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `
+    position:fixed; top:-9999px; left:-9999px;
+    width:${CERT_W}px; height:${CERT_H}px;
+    overflow:hidden; z-index:-1;
+  `;
+  document.body.appendChild(wrapper);
+
+  const cert = activeCertData;
+  const lang = activeCertLang;
+  const isFa = lang === 'fa';
+  const cu = getCurrentUser();
+  const photo = cert.userPhoto || (cu && cu.photo) || '';
+  const name = isFa ? (cert.nameFa || '') : (cert.nameEn || cert.nameFa || '');
+  const score = cert.score != null ? cert.score : '—';
+  const createdAt = cert.createdAt || nowIso();
+  const dateFa = fmtDateFa(createdAt);
+  const dateEn = fmtDateEn(createdAt);
+  const id = cert.code || '';
+
+  const courseLineFa = `دوره برنامه‌نویسی <span style="color:#2a6496;font-weight:900;">${escapeHtml(cert.lang||'')}</span> را با موفقیت به پایان رسانده است`;
+  const courseLineEn = `has successfully completed the <span style="color:#2a6496;font-weight:900;">${escapeHtml(cert.lang||'')}</span> programming course`;
+
+  const issuedFa = `بدین وسیله توسط <b style="color:#1a2332;font-weight:800;">Code Studio</b> گواهی می‌شود`;
+  const issuedEn = `This is to certify, issued by <b style="color:#1a2332;font-weight:800;">Code Studio</b>`;
+
+  const SC = (v) => v + 'px'; // shorthand
+
+  // Corner SVG (silver)
+  const cornerSVG = `<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M2 46V16C2 8.268 8.268 2 16 2H46" stroke="rgba(140,158,175,0.85)" stroke-width="2.5"/><path d="M7 46V19C7 13.477 11.477 9 17 9H46" stroke="rgba(140,158,175,0.4)" stroke-width="0.9"/><circle cx="11" cy="11" r="2.5" fill="rgba(140,158,175,0.7)"/><circle cx="6" cy="6" r="1.2" fill="rgba(140,158,175,0.4)"/></svg>`;
+
+  const px = (ratio) => Math.round(CERT_W * ratio);
+  const py = (ratio) => Math.round(CERT_H * ratio);
+
+  const photoSize = px(0.095);
+  const photoHtml = photo
+    ? `<div style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;overflow:hidden;border:${px(0.0025)}px solid rgba(140,158,175,0.7);box-shadow:0 ${py(0.004)}px ${py(0.009)}px rgba(100,130,160,0.35);background:#c8d0d8;flex-shrink:0;margin-top:${py(0.013)}px;">
+        <img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
+       </div>`
+    : `<div style="width:${photoSize}px;height:${photoSize}px;margin-top:${py(0.013)}px;"></div>`;
+
+  wrapper.innerHTML = `
+  <div style="
+    width:${CERT_W}px; height:${CERT_H}px;
+    position:relative;
+    background: radial-gradient(ellipse 70% 35% at 50% 0%, rgba(200,210,220,0.25), transparent 55%),
+                radial-gradient(ellipse 50% 25% at 50% 100%, rgba(180,195,210,0.15), transparent 55%),
+                linear-gradient(170deg, #f4f6f8 0%, #edf0f3 45%, #f2f4f7 100%);
+    border-radius:14px;
+    overflow:hidden;
+    font-family:'Vazirmatn','Segoe UI',sans-serif;
+    color:#1a2332;
+    box-sizing:border-box;
+  ">
+    <!-- outer border -->
+    <div style="position:absolute;inset:9px;border:2px solid rgba(140,158,175,0.75);border-radius:10px;pointer-events:none;"></div>
+    <!-- inner border -->
+    <div style="position:absolute;inset:15px;border:0.8px solid rgba(140,158,175,0.35);border-radius:7px;pointer-events:none;"></div>
+
+    <!-- corners -->
+    <div style="position:absolute;top:5px;left:5px;width:48px;height:48px;">${cornerSVG}</div>
+    <div style="position:absolute;top:5px;right:5px;width:48px;height:48px;transform:scaleX(-1);">${cornerSVG}</div>
+    <div style="position:absolute;bottom:5px;left:5px;width:48px;height:48px;transform:scaleY(-1);">${cornerSVG}</div>
+    <div style="position:absolute;bottom:5px;right:5px;width:48px;height:48px;transform:scale(-1,-1);">${cornerSVG}</div>
+
+    <!-- watermark -->
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:${px(0.13)}px;font-weight:900;color:rgba(100,120,140,0.04);letter-spacing:6px;pointer-events:none;white-space:nowrap;">CS</div>
+
+    <!-- main content -->
+    <div style="
+      position:relative;z-index:1;
+      display:flex;flex-direction:column;align-items:center;
+      width:100%;height:100%;
+      padding:${py(0.038)}px ${px(0.05)}px 0;
+      box-sizing:border-box;
+      direction:${isFa?'rtl':'ltr'};
+    ">
+      <div style="font-size:${px(0.0095)}px;font-weight:800;letter-spacing:4px;color:#6b8098;text-transform:uppercase;">${isFa?'استودیوی کد':'CODE STUDIO'}</div>
+      <div style="font-size:${px(0.0145)}px;font-weight:800;color:#1a2332;letter-spacing:1px;margin-top:${py(0.003)}px;">${isFa?'گواهینامه تکمیل دوره':'CERTIFICATE OF COMPLETION'}</div>
+
+      ${photoHtml}
+
+      <div style="font-size:${px(0.026)}px;font-weight:900;color:#1a2332;margin-top:${py(0.01)}px;letter-spacing:.5px;">${escapeHtml(name)}</div>
+      <div style="font-size:${px(0.009)}px;color:#5a6e80;margin-top:${py(0.005)}px;font-weight:500;">${isFa?'این مدرک به نام فرد فوق صادر شده است':'This certificate is proudly presented to the above named individual'}</div>
+
+      <div style="font-size:${px(0.0125)}px;font-weight:700;color:#1a2332;margin-top:${py(0.014)}px;text-align:center;line-height:1.6;max-width:76%;">${isFa?courseLineFa:courseLineEn}</div>
+      <div style="font-size:${px(0.0085)}px;color:#5a6e80;margin-top:${py(0.009)}px;font-weight:500;">${isFa?issuedFa:issuedEn}</div>
+
+      <div style="display:flex;align-items:center;gap:${px(0.009)}px;margin-top:${py(0.012)}px;background:rgba(42,100,150,0.07);border:1px solid rgba(42,100,150,0.2);padding:${py(0.005)}px ${px(0.013)}px;border-radius:99px;">
+        <span style="font-size:${px(0.0082)}px;font-weight:700;color:#2a6496;">${isFa?'نمره نهایی':'Final Score'}</span>
+        <span style="font-size:${px(0.0125)}px;font-weight:900;color:#2a6496;">${score} / 100</span>
+      </div>
+
+      <!-- bottom sig row -->
+      <div style="margin-top:auto;width:100%;display:flex;align-items:flex-end;justify-content:space-between;padding:0 ${px(0.06)}px ${py(0.024)}px;box-sizing:border-box;">
+        <div style="text-align:center;width:28%;">
+          <div style="border-top:1.2px solid rgba(140,158,175,0.6);padding-top:${py(0.004)}px;margin-top:${py(0.015)}px;">
+            <div style="font-size:${px(0.0082)}px;font-weight:800;color:#1a2332;">Amirhosein Naderi</div>
+            <div style="font-size:${px(0.0072)}px;color:#6b8098;font-weight:600;margin-top:${py(0.002)}px;">${isFa?'مدیر دوره':'Course Director'}</div>
+          </div>
+        </div>
+        <div style="width:8%;"></div>
+        <div style="text-align:center;width:28%;">
+          <div style="border-top:1.2px solid rgba(140,158,175,0.6);padding-top:${py(0.004)}px;margin-top:${py(0.015)}px;">
+            <div style="font-size:${px(0.0082)}px;font-weight:800;color:#1a2332;">Code Studio</div>
+            <div style="font-size:${px(0.0072)}px;color:#6b8098;font-weight:600;margin-top:${py(0.002)}px;">${isFa?'صادرکننده گواهی':'Issuing Authority'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom absolute items -->
+    <div style="position:absolute;bottom:${py(0.013)}px;left:50%;transform:translateX(-50%);font-size:${px(0.0058)}px;color:rgba(100,120,140,0.55);letter-spacing:1.5px;font-weight:600;white-space:nowrap;">ID: ${escapeHtml(id)}</div>
+    <div style="position:absolute;bottom:${py(0.013)}px;right:3%;font-size:${px(0.0065)}px;color:#6b8098;font-weight:600;white-space:nowrap;">${dateEn}</div>
+    <div style="position:absolute;bottom:${py(0.013)}px;left:3%;font-size:${px(0.0065)}px;color:#6b8098;font-weight:600;white-space:nowrap;">${dateFa}</div>
+  </div>`;
+
+  const node = wrapper.firstElementChild;
+  await document.fonts.ready;
+
+  const canvas = await html2canvas(node, {
+    scale: 2,
+    width: CERT_W,
+    height: CERT_H,
+    backgroundColor: null,
+    useCORS: true,
+    allowTaint: true,
+    foreignObjectRendering: false,
+    logging: false,
+    imageTimeout: 0
+  });
+
+  document.body.removeChild(wrapper);
+
+  await new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      if(!blob){ showToast('خطا در ساخت تصویر'); resolve(); return; }
+      const dlUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const nameRaw = (lang === 'fa' ? cert.nameFa : (cert.nameEn || cert.nameFa)) || 'certificate';
+      a.href = dlUrl;
+      a.download = `CS-Degree-${nameRaw.replace(/\s+/g,'_')}-${lang}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=> URL.revokeObjectURL(dlUrl), 2000);
+      resolve();
+    }, 'image/png');
+  });
+
+  showToast('مدرک با موفقیت دانلود شد');
+}
+
+/* ===================== ADMIN PANEL ===================== */
+function enterAdminPanel(){
+  $('#appShell').classList.remove('active');
+  $('#onboardingScreen').classList.add('hidden');
+  $('#adminScreen').classList.remove('hidden');
+  $all('.admin-tab').forEach(t => t.classList.remove('active'));
+  $all('.admin-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector('.admin-tab[data-tab="codes"]').classList.add('active');
+  $('#pane-codes').classList.add('active');
+  refreshAdminStats();
+  renderUsersList();
+  renderArchiveList();
+  populateCodesUserSelect();
+  populateLangSelects();
+
+  // Re-bind tab clicks each time panel opens
+  $all('.admin-tab').forEach(tab => {
+    tab.replaceWith(tab.cloneNode(true)); // remove old listeners
+  });
+  $all('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      $all('.admin-tab').forEach(t => t.classList.remove('active'));
+      $all('.admin-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      $('#pane-' + tab.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+}
+
+$('#adminExitBtn').addEventListener('click', () => {
+  $('#adminScreen').classList.add('hidden');
+  /* BUG FIX #10: clear adminAuthed on exit so a later reload doesn't force
+     the admin back into the panel against their will. */
+  saveJSON(LS_KEYS.adminAuthed, false);
+  const user = getCurrentUser();
+  if(user){
+    enterMainApp(user);
+  } else {
+    $('#onboardingScreen').classList.remove('hidden');
+  }
+});
+
+
+function refreshAdminStats(){
+  const users = getAllUsers();
+  let totalActive = 0, totalUsed = 0;
+  users.forEach(u => {
+    const codes = getUserCodes(u.id);
+    if(codes){
+      totalActive += codes.filter(c => c.active && !c.used).length;
+      totalUsed += codes.filter(c => c.used).length;
+    }
+  });
+  $('#statUsers').textContent = users.length;
+  $('#statCerts').textContent = totalActive;
+  $('#statPending').textContent = totalUsed;
+}
+
+function populateCodesUserSelect(){
+  const users = getAllUsers();
+  const sel = $('#codesUserSelect');
+  sel.innerHTML = '<option value="">— انتخاب کاربر —</option>' +
+    users.map(u => `<option value="${u.id}">${escapeHtml(u.firstNameFa + ' ' + u.lastNameFa)} · ${escapeHtml(u.firstNameEn + ' ' + u.lastNameEn)}</option>`).join('');
+}
+
+/* ===================== DIRECT ISSUE (NO CODE) ===================== */
+function populateLangSelects(){
+  const opts = '<option value="">— انتخاب زبان —</option>' +
+    LANG_CODES.map(l => `<option value="${l.label}">${l.label}</option>`).join('');
+  $('#selfIssueLang').innerHTML = opts;
+  $('#freeIssueLang').innerHTML = opts;
+}
+
+$('#selfIssueScore').addEventListener('input', (e) => {
+  $('#selfIssueScoreDisplay').textContent = e.target.value;
+});
+$('#freeIssueScore').addEventListener('input', (e) => {
+  $('#freeIssueScoreDisplay').textContent = e.target.value;
+});
+
+// Free issue photo upload
+let freeIssuePhoto = null;
+$('#freeIssueUploadZone').addEventListener('click', () => $('#freeIssueFileInput').click());
+$('#freeIssueFileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    freeIssuePhoto = ev.target.result;
+    $('#freeIssuePreview').innerHTML = `<img src="${freeIssuePhoto}" alt="">`;
+    $('#freeIssueUploadZone').classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+});
+
+// Issue cert for admin self
+$('#selfIssueBtn').addEventListener('click', () => {
+  const lang = $('#selfIssueLang').value;
+  const score = parseInt($('#selfIssueScore').value, 10);
+  if(!lang){
+    showToast('لطفاً یک زبان برنامه‌نویسی انتخاب کنید');
+    return;
+  }
+  const me = getCurrentUser();
+  if(!me){
+    showToast('ابتدا باید وارد حساب کاربری شوید');
+    return;
+  }
+  const btn = $('#selfIssueBtn');
+  btn.classList.add('loading'); btn.disabled = true;
+  setTimeout(() => {
+    const cert = {
+      id: uid(),
+      code: 'DIRECT-' + uid().slice(2,10).toUpperCase(),
+      nameFa: me.firstNameFa + ' ' + me.lastNameFa,
+      nameEn: me.firstNameEn + ' ' + me.lastNameEn,
+      lang,
+      score,
+      createdAt: nowIso(),
+      used: true,
+      userPhoto: me.photo,
+      linkedUserId: me.id,
+      directIssue: true
+    };
+    // Save to admin's history too
+    const hist = getUserHistory(me.id);
+    hist.push({
+      id: uid(),
+      certData: cert,
+      lang: 'fa',
+      score,
+      courseTitle: 'گواهی ' + lang,
+      downloadedAt: nowIso()
+    });
+    saveUserHistory(me.id, hist);
+    btn.classList.remove('loading'); btn.disabled = false;
+    showToast('مدرک صادر شد ✓');
+    openCertificateView(cert, 'fa', false, true);
+  }, 400);
+});
+
+// Issue cert for anyone
+$('#freeIssueBtn').addEventListener('click', () => {
+  const nameFa = $('#freeIssueFa').value.trim();
+  const nameEn = $('#freeIssueEn').value.trim();
+  const lang = $('#freeIssueLang').value;
+  const score = parseInt($('#freeIssueScore').value, 10);
+  if(!nameFa || !nameEn){
+    showToast('لطفاً نام فارسی و انگلیسی را وارد کنید');
+    return;
+  }
+  if(!lang){
+    showToast('لطفاً یک زبان برنامه‌نویسی انتخاب کنید');
+    return;
+  }
+  const btn = $('#freeIssueBtn');
+  btn.classList.add('loading'); btn.disabled = true;
+  setTimeout(() => {
+    const cert = {
+      id: uid(),
+      code: 'DIRECT-' + uid().slice(2,10).toUpperCase(),
+      nameFa,
+      nameEn,
+      lang,
+      score,
+      createdAt: nowIso(),
+      used: true,
+      userPhoto: freeIssuePhoto || null,
+      linkedUserId: null,
+      directIssue: true
+    };
+    btn.classList.remove('loading'); btn.disabled = false;
+    // Reset form
+    $('#freeIssueFa').value = '';
+    $('#freeIssueEn').value = '';
+    $('#freeIssueLang').value = '';
+    $('#freeIssueScore').value = 85;
+    $('#freeIssueScoreDisplay').textContent = 85;
+    freeIssuePhoto = null;
+    $('#freeIssuePreview').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    $('#freeIssueUploadZone').classList.remove('has-image');
+    showToast('مدرک صادر شد ✓');
+    openCertificateView(cert, 'fa', false, true);
+  }, 400);
+});
+
+$('#codesUserSelect').addEventListener('change', (e) => {
+  const userId = e.target.value;
+  if(!userId){
+    $('#userCodesPanel').style.display = 'none';
+    $('#userCodesEmpty').style.display = 'block';
+    return;
+  }
+  renderUserCodesPanel(userId);
+});
+
+function renderUserCodesPanel(userId){
+  const users = getAllUsers();
+  const u = users.find(x => x.id === userId);
+  if(!u) return;
+
+  let codes = getUserCodes(userId);
+  // If user has no codes yet (legacy user), generate them now
+  if(!codes){
+    codes = generateUserCodeSet(userId);
+    saveUserCodes(userId, codes);
+  }
+
+  $('#userCodesPanel').style.display = 'block';
+  $('#userCodesEmpty').style.display = 'none';
+
+  $('#userCodesHeader').innerHTML = `
+    <img src="${u.photo}" alt="">
+    <div>
+      <div class="user-codes-header-name">${escapeHtml(u.firstNameFa + ' ' + u.lastNameFa)}</div>
+      <div class="user-codes-header-sub">${escapeHtml(u.firstNameEn + ' ' + u.lastNameEn)} · ۱۲ کد زبان برنامه‌نویسی</div>
+    </div>`;
+
+  $('#userCodesList').innerHTML = codes.map((c, idx) => {
+    const initials = c.langLabel.slice(0,2).toUpperCase();
+    let statusClass, statusText;
+    if(c.used){ statusClass='used'; statusText='استفاده شده'; }
+    else if(c.active){ statusClass='active'; statusText='فعال'; }
+    else { statusClass='inactive'; statusText='غیرفعال'; }
+
+    const cardClass = c.used ? 'used-code' : (c.active ? 'active-code' : '');
+
+    return `<div class="lang-code-card ${cardClass}" data-idx="${idx}" data-uid="${userId}">
+      <div class="lang-icon">${escapeHtml(initials)}</div>
+      <div class="lang-code-info">
+        <div class="lang-code-name">${escapeHtml(c.langLabel)}</div>
+        <div class="lang-code-value">${c.code.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3')}</div>
+        ${c.active && c.score != null ? `<div style="font-size:11px;color:var(--gold-300);margin-top:2px;">نمره: ${c.score} / 100</div>` : ''}
+        ${c.used ? `<div style="font-size:11px;color:rgba(245,240,230,0.4);margin-top:2px;">استفاده شده در ${fmtDateFaShort(c.usedAt)}</div>` : ''}
+        ${!c.used ? `<div class="lang-code-actions">
+          <div class="score-mini-wrap">
+            <input type="range" min="0" max="100" value="${c.score ?? 85}" class="score-mini-slider" data-idx="${idx}">
+            <span class="score-mini-label" id="scoreLbl_${userId}_${idx}">${c.score ?? 85}</span>
+          </div>
+          <button class="copy-code-mini" data-code="${c.code}">کپی</button>
+          ${c.active
+            ? `<button class="btn-deactivate" data-idx="${idx}" data-uid="${userId}">غیرفعال</button>`
+     
